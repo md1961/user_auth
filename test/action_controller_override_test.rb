@@ -3,9 +3,8 @@ require 'user_auth/action_controller_override'
 
 
 class TestsController < ActionController::Base
-  def get_access_denied
-    access_denied
-  end
+  def get_authenticate ; authenticate ; end
+  def get_access_denied; access_denied; end
 end
 
 
@@ -48,10 +47,15 @@ class TestsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_cuo
-    override_current_user('cuo')
-    assert_equal('cuo', @controller.current_user)
-    restore_current_user
+  def test_authenticate
+    override_logged_in_q(true)
+    assert(@controller.send(:authenticate), "authenticate() should return true")
+    restore_logged_in_q
+
+    override_logged_in_q(false)
+    get :get_authenticate
+    assert_redirected_to '/login'
+    restore_logged_in_q
   end
 
   def test_access_denied
@@ -77,6 +81,24 @@ class TestsControllerTest < ActionController::TestCase
     def restore_current_user
       @controller.instance_eval do
         alias :current_user :current_user_orig
+      end
+    end
+
+    def override_logged_in_q(retval)
+      @controller.instance_variable_set(:@__logged_in_q_retval, retval)
+      def @controller.logged_in_q_override
+        @__logged_in_q_retval
+      end
+
+      @controller.instance_eval do
+        alias :logged_in_q_orig :logged_in?
+        alias :logged_in?       :logged_in_q_override
+      end
+    end
+
+    def restore_logged_in_q
+      @controller.instance_eval do
+        alias :logged_in? :logged_in_q_orig
       end
     end
 end
