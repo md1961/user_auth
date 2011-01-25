@@ -22,6 +22,7 @@ class SessionsControllerTest < ActionController::TestCase
     User.override_authenticate(user_mock)
     get :create
     User.restore_authenticate
+
     assert_equal(USER_ID, session[:user_id], "session[:user_id]")
     assert_redirected_to '/'
   end
@@ -30,8 +31,16 @@ class SessionsControllerTest < ActionController::TestCase
     User.override_authenticate(nil)
     get :create
     User.restore_authenticate
+
     assert_response :success
     assert_template :new
+  end
+
+  def test_destroy
+    get :destroy, {}, {:user_id => USER_ID}
+
+    assert_nil(session[:user_id], "session[:user_id]")
+    assert_redirected_to '/'
   end
 end
 
