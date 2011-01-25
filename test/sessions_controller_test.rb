@@ -25,6 +25,14 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal(USER_ID, session[:user_id], "session[:user_id]")
     assert_redirected_to '/'
   end
+
+  def test_create_for_not_authenticated
+    User.override_authenticate(nil)
+    get :create
+    User.restore_authenticate
+    assert_response :success
+    assert_template :new
+  end
 end
 
 
