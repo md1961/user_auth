@@ -8,3 +8,5 @@ DIRECTORIES_TO_LOAD_FROM.each do |dir|
   ActiveSupport::Dependencies.autoload_once_paths.delete(path)
 end
 
+require 'user_auth/action_controller_override'
+
