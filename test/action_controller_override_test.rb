@@ -83,6 +83,29 @@ class TestsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_authenticate_as_administrator
+    is_administrator    = true
+    is_logged_in = true
+    override_current_user(create_user_mock(:administrator?, is_administrator))
+    override_logged_in_q(is_logged_in)
+    assert(@controller.send(:authenticate_as_administrator), "authenticate_as_administrator() should return true")
+    restore_logged_in_q
+    restore_current_user
+
+    [
+      [true , false],
+      [false, true ],
+      [false, false],
+    ].each do |is_administrator, is_logged_in|
+      override_current_user(create_user_mock(:administrator?, is_administrator))
+      override_logged_in_q(is_logged_in)
+      get :get_authenticate_as_administrator
+      assert_redirected_to '/login'
+      restore_logged_in_q
+      restore_current_user
+    end
+  end
+
   def test_access_denied
     get :get_access_denied
     assert_redirected_to '/login'
