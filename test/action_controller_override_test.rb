@@ -87,6 +87,16 @@ class TestsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_authenticate_as_administrator_without_user_administrator_q_defined
+    msg = "authenticate_as_administrator() should return false if User#administrator?() not defined"
+    override_current_user(create_user_mock)
+    override_logged_in_q(true)
+    get :get_authenticate_as_administrator
+    assert_redirected_to '/login'
+    restore_logged_in_q
+    restore_current_user
+  end
+
   def test_authenticate_as_administrator
     is_administrator    = true
     is_logged_in = true

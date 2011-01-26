@@ -20,7 +20,7 @@ class ActionController::Base
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインして、かつ管理者権限を持てば true、なければ false（同時にログイン画面にリダイレクトする）
     def authenticate_as_administrator
-      return logged_in? && current_user.administrator? ? true : access_denied
+      return logged_in? && current_user.respond_to?(:administrator?) && current_user.administrator? ? true : access_denied
     end
 
     # 現在のログインユーザを返す

@@ -1,8 +1,41 @@
 UserAuth
 ========
 
-Introduction goes here.
+ユーザ認証を行う機能を追加するプラグイン
 
+
+準備
+====
+
+1. session データを保存する DB テーブルを作成する
+
+  下記コマンドでマイグレーション・ファイルを生成し、マイグレートしてテーブルを作成する。
+
+  $ rake db:sessions:create
+  $ rake db:migrate
+
+2. session データを DB に保存するための設定をする
+
+  config/initializers/session_store.rb を編集し、
+
+    Grassline::Application.config.session_store :cookie_store, :key => '_grassline_session'
+
+  の一文をコメントアウトして、
+ 
+    Grassline::Application.config.session_store :active_record_store
+
+  の一文のコメント開始文字 # を削除して有効にする。
+
+3. モデル User を用意する
+
+4. app/views/sessions/new.html.erb を用意する
+
+5. config/routes に session 関連のルーティングを用意する
+
+  match '/login'  => "sessions#new"    , :as => :login
+  match '/logout' => "sessions#destroy", :as => :logout
+  resource :session
+  
 
 Example
 =======
