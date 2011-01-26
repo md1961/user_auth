@@ -1,5 +1,5 @@
 
-DIRECTORIES_TO_LOAD_FROM = %w(controllers helpers)
+DIRECTORIES_TO_LOAD_FROM = %w(models controllers helpers)
 
 DIRECTORIES_TO_LOAD_FROM.each do |dir|
   path = File.join(File.dirname(__FILE__), 'app', dir)

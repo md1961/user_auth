@@ -28,6 +28,23 @@ UserAuth
 
 3. モデル User を用意する
 
+  属性は下記を用意する
+
+    属性名    データ型
+   --------------------
+    name      string
+    password  string
+
+  書き込み権限、管理者権限を制御したいときは、それぞれ下記の属性も用意する
+
+    属性名            データ型
+   ----------------------------
+    is_writer         boolean
+    is_administrator  boolean
+
+  さらにクラス定義で ...
+  
+
 4. app/views/sessions/new.html.erb を用意する
 
 5. config/routes に session 関連のルーティングを用意する
