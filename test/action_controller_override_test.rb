@@ -6,12 +6,14 @@ class TestsController < ActionController::Base
   def get_authenticate                 ; authenticate                 ; end
   def get_authenticate_as_writer       ; authenticate_as_writer       ; end
   def get_authenticate_as_administrator; authenticate_as_administrator; end
+  def get_current_user                 ; current_user                 ; end
   def get_access_denied                ; access_denied                ; end
 end
 
 
 class TestsControllerTest < ActionController::TestCase
 
+=begin
   ALL_METHODS = [
     :authenticate,
     :authenticate_as_writer,
@@ -20,12 +22,15 @@ class TestsControllerTest < ActionController::TestCase
     :logged_in?,
     :access_denied,
   ]
+=end
 
   def setup
     Rails.application.routes.draw do
       match '/login' => "tests#index", :as => :login
       match ':controller(/:action(/:id(.:format)))'
     end
+
+    @request.session = ActionController::TestSession.new
   end
 
   def test_methods_are_protected
@@ -106,6 +111,36 @@ class TestsControllerTest < ActionController::TestCase
     end
   end
 
+  USER_MOCK = :user_mock
+
+  def test_current_user
+    msg = "current_user() should return nil without setting nothing"
+    assert_nil(@controller.send(:current_user), msg)
+
+    msg = "current_user() should return nil with session[:user_id] of nil"
+    @request.session[:user_id] = nil
+    assert_nil(@controller.send(:current_user), msg)
+
+    msg = "current_user() should return User.find() with session[:user_id] of non-nil and @current_user of nil"
+    assert_nil(@controller.instance_variable_get(:@current_user), "@current_user before calling current_user() should be nil")
+    @request.session[:user_id] = :whatever_non_nil
+    User.override_find(USER_MOCK)
+    assert_equal(USER_MOCK, @controller.send(:current_user), msg)
+    User.restore_find
+    assert_equal(USER_MOCK, @controller.instance_variable_get(:@current_user), "@current_user after calling current_user()")
+    @controller.instance_variable_set(:@current_user, nil)
+
+    msg = "current_user() should return @current_user with both session[:user_id] and @current_user of non-nil"
+    assert_nil(@controller.instance_variable_get(:@current_user), "@current_user before calling current_user() should be nil")
+    @request.session[:user_id] = :whatever_non_nil
+    @controller.instance_variable_set(:@current_user, USER_MOCK)
+    User.override_find(:something_else)
+    assert_equal(USER_MOCK, @controller.send(:current_user), msg)
+    User.restore_find
+    assert_equal(USER_MOCK, @controller.instance_variable_get(:@current_user), "@current_user after calling current_user()")
+    @controller.instance_variable_set(:@current_user, nil)  # just in case
+  end
+
   def test_access_denied
     get :get_access_denied
     assert_redirected_to '/login'
@@ -159,5 +194,26 @@ class TestsControllerTest < ActionController::TestCase
         alias :logged_in? :logged_in_q_orig
       end
     end
+end
+
+
+class User
+  def self.override_find(user_mock)
+    @@user_mock = user_mock
+    User.instance_eval do
+      alias :find_original :find
+      alias :find          :find_override
+    end
+  end
+
+  def self.restore_find
+    User.instance_eval do
+      alias :find :find_original
+    end
+  end
+
+  def self.find_override(id)
+    @@user_mock
+  end
 end
 
