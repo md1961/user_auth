@@ -3,8 +3,10 @@ require 'user_auth/action_controller_override'
 
 
 class TestsController < ActionController::Base
-  def get_authenticate ; authenticate ; end
-  def get_access_denied; access_denied; end
+  def get_authenticate                 ; authenticate                 ; end
+  def get_authenticate_as_writer       ; authenticate_as_writer       ; end
+  def get_authenticate_as_administrator; authenticate_as_administrator; end
+  def get_access_denied                ; access_denied                ; end
 end
 
 
@@ -58,6 +60,21 @@ class TestsControllerTest < ActionController::TestCase
     restore_logged_in_q
   end
 
+  def test_authenticate_as_writer
+    override_current_user(create_user_mock(:writer?, true))
+    override_logged_in_q(true)
+    assert(@controller.send(:authenticate_as_writer), "authenticate_as_writer() should return true")
+    restore_logged_in_q
+    restore_current_user
+
+=begin
+    override_logged_in_q(false)
+    get :get_authenticate_as_writer
+    assert_redirected_to '/login'
+    restore_logged_in_q
+=end
+  end
+
   def test_access_denied
     get :get_access_denied
     assert_redirected_to '/login'
@@ -82,6 +99,16 @@ class TestsControllerTest < ActionController::TestCase
       @controller.instance_eval do
         alias :current_user :current_user_orig
       end
+    end
+
+    def create_user_mock(method, retval)
+      user_mock = Object.new
+      user_mock.class_eval do
+        define_method(method.to_sym) do
+          retval
+        end
+      end
+      return user_mock
     end
 
     def override_logged_in_q(retval)
