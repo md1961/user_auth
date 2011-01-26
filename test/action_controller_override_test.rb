@@ -141,6 +141,23 @@ class TestsControllerTest < ActionController::TestCase
     @controller.instance_variable_set(:@current_user, nil)  # just in case
   end
 
+  def test_logged_in_q
+    msg = "logged_in?() should return false when current_user() returns nil"
+    override_current_user(nil)
+    assert(! @controller.send(:logged_in?), msg)
+    restore_current_user
+
+    msg = "logged_in?() should return false when current_user() returns a non-User"
+    override_current_user(Object.new)
+    assert(! @controller.send(:logged_in?), msg)
+    restore_current_user
+
+    msg = "logged_in?() should return false when current_user() returns a User"
+    override_current_user(User.new)
+    assert(@controller.send(:logged_in?), msg)
+    restore_current_user
+  end
+
   def test_access_denied
     get :get_access_denied
     assert_redirected_to '/login'
