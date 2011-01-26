@@ -61,18 +61,26 @@ class TestsControllerTest < ActionController::TestCase
   end
 
   def test_authenticate_as_writer
-    override_current_user(create_user_mock(:writer?, true))
-    override_logged_in_q(true)
+    is_writer    = true
+    is_logged_in = true
+    override_current_user(create_user_mock(:writer?, is_writer))
+    override_logged_in_q(is_logged_in)
     assert(@controller.send(:authenticate_as_writer), "authenticate_as_writer() should return true")
     restore_logged_in_q
     restore_current_user
 
-=begin
-    override_logged_in_q(false)
-    get :get_authenticate_as_writer
-    assert_redirected_to '/login'
-    restore_logged_in_q
-=end
+    [
+      [true , false],
+      [false, true ],
+      [false, false],
+    ].each do |is_writer, is_logged_in|
+      override_current_user(create_user_mock(:writer?, is_writer))
+      override_logged_in_q(is_logged_in)
+      get :get_authenticate_as_writer
+      assert_redirected_to '/login'
+      restore_logged_in_q
+      restore_current_user
+    end
   end
 
   def test_access_denied
