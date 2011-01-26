@@ -13,7 +13,7 @@ class ActionController::Base
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインして、かつ書き込み権限を持てば true、なければ false（同時にログイン画面にリダイレクトする）
     def authenticate_as_writer
-      return logged_in? && current_user.writer? ? true : access_denied
+      return logged_in? && current_user.respond_to?(:writer?) && current_user.writer? ? true : access_denied
     end
 
     # ログイン手続きを経ない、かつ管理者権限を持たない不正なアクセスを遮断するためのフィルタ・メソッド。

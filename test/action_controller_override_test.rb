@@ -13,17 +13,6 @@ end
 
 class TestsControllerTest < ActionController::TestCase
 
-=begin
-  ALL_METHODS = [
-    :authenticate,
-    :authenticate_as_writer,
-    :authenticate_as_administrator,
-    :current_user,
-    :logged_in?,
-    :access_denied,
-  ]
-=end
-
   def setup
     Rails.application.routes.draw do
       match '/login' => "tests#index", :as => :login
@@ -63,6 +52,16 @@ class TestsControllerTest < ActionController::TestCase
     get :get_authenticate
     assert_redirected_to '/login'
     restore_logged_in_q
+  end
+
+  def test_authenticate_as_writer_without_user_writer_q_defined
+    msg = "authenticate_as_writer() should return false if User#writer?() not defined"
+    override_current_user(create_user_mock)
+    override_logged_in_q(true)
+    get :get_authenticate_as_writer
+    assert_redirected_to '/login'
+    restore_logged_in_q
+    restore_current_user
   end
 
   def test_authenticate_as_writer
@@ -184,11 +183,13 @@ class TestsControllerTest < ActionController::TestCase
       end
     end
 
-    def create_user_mock(method, retval)
+    def create_user_mock(method=nil, retval=nil)
       user_mock = Object.new
-      user_mock.class_eval do
-        define_method(method.to_sym) do
-          retval
+      if method.is_a?(Symbol)
+        user_mock.class_eval do
+          define_method(method.to_sym) do
+            retval
+          end
         end
       end
       return user_mock
