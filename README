@@ -55,10 +55,10 @@ UserAuth
 
   属性は下記を用意する
 
-    属性名    データ型
-   --------------------
-    name      string
-    password  string
+    属性名           データ型
+   --------------------------
+    name             string
+    hashed_password  string
 
   書き込み権限、管理者権限を制御したいときは、それぞれ下記の属性も用意する。
 
