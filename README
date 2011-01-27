@@ -53,24 +53,19 @@ UserAuth
 
     class User < UserAuthKuma::User
 
-  属性は下記を用意する
+  テーブルのカラムは下記を用意する
 
-    属性名           データ型
+    カラム名         データ型
    --------------------------
     name             string
     hashed_password  string
 
-  書き込み権限、管理者権限を制御したいときは、それぞれ下記の属性も用意する。
+  書き込み権限、管理者権限を制御したいときは、それぞれ下記のカラムも用意する。
 
-    属性名            データ型
+    カラム名          データ型
    ----------------------------
     is_writer         boolean
     is_administrator  boolean
-
-  さらにクラス定義で ...
-
-  ...(Under Construction)...
-
 
 5. ユーザ定義の定数ファイルを用意する
   
@@ -87,7 +82,8 @@ UserAuth
 
 6. app/views/sessions/new.html.erb を用意する
 
-  ...(Under Construction)...
+  lib/app/views/sessions/_new_user_auth.html.erb をコピーして作ってください。
+  そのうち、もっといいやり方を考えます。
   
 
 Example
@@ -96,4 +92,4 @@ Example
 Example goes here.
 
 
-Copyright (c) 2011 [name of plugin creator], released under the MIT license
+Copyright (c) 2011 [name of Japan Petroleum Exploration co., ltd.], released under the MIT license
