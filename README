@@ -11,24 +11,32 @@ UserAuth
 
   下記コマンドでマイグレーション・ファイルを生成し、マイグレートしてテーブルを作成する。
 
-  $ rake db:sessions:create
-  $ rake db:migrate
+    $ rake db:sessions:create
+    $ rake db:migrate
 
-2. session データを DB に保存するための設定をする
+2. session 関連のルーティングを設定する
+
+  config/routes.rb に下記を追加する。
+
+    match '/login'  => "sessions#new"    , :as => :login
+    match '/logout' => "sessions#destroy", :as => :logout
+    resource :session
+
+3. session データを DB に保存するための設定をする
 
   config/initializers/session_store.rb を編集し、
 
-    Grassline::Application.config.session_store :cookie_store, :key => '_grassline_session'
+    {アプリ名}::Application.config.session_store :cookie_store, :key => '_hoge_session'
 
   の一文をコメントアウトして、
  
-    Grassline::Application.config.session_store :active_record_store
+    {アプリ名}::Application.config.session_store :active_record_store
 
   の一文のコメント開始文字 # を削除して有効にする。
 
-3. モデル User を用意する
+4. モデル User を用意する
 
-  UserAuthKuma::User を継承する。
+  下記のように UserAuthKuma::User を継承する。
 
     class User < UserAuthKuma::User
 
@@ -51,7 +59,7 @@ UserAuth
   ...(Under Construction)...
 
 
-4. ユーザ定義の定数ファイルを用意する
+5. ユーザ定義の定数ファイルを用意する
   
   下記の内容のファイルを config/initializers の下に適当なファイル名で用意する。
   数値自体は任意の値に設定する。
@@ -62,12 +70,6 @@ UserAuth
       MIN_LENGTH_OF_PASSWORD =  4
       MAX_LENGTH_OF_PASSWORD = 20
     end
-
-5. config/routes に session 関連のルーティングを用意する
-
-  match '/login'  => "sessions#new"    , :as => :login
-  match '/logout' => "sessions#destroy", :as => :logout
-  resource :session
 
 6. app/views/sessions/new.html.erb を用意する
   
