@@ -6,17 +6,17 @@ class User < ActiveRecord::Base
 
   attr_accessor :password, :old_password
 
-  MIN_LENGTH_OF_NAME     =  5
-  MAX_LENGTH_OF_NAME     = 50
-  MIN_LENGTH_OF_PASSWORD =  4
-  MAX_LENGTH_OF_PASSWORD = 20
+  MIN_LENGTH_OF_NAME     = UserConstant::MIN_LENGTH_OF_NAME
+  MAX_LENGTH_OF_NAME     = UserConstant::MAX_LENGTH_OF_NAME
+  MIN_LENGTH_OF_PASSWORD = UserConstant::MIN_LENGTH_OF_PASSWORD
+  MAX_LENGTH_OF_PASSWORD = UserConstant::MAX_LENGTH_OF_PASSWORD
 
-  validates :name    , :presence   => true,
-                       :uniqueness => true,
-                       :length     => {:within => MIN_LENGTH_OF_NAME .. MAX_LENGTH_OF_NAME}
+  validates :name    , :presence     => true,
+                       :uniqueness   => true,
+                       :length       => {:within => MIN_LENGTH_OF_NAME .. MAX_LENGTH_OF_NAME}
   validates :password, :presence     => true,
                        :confirmation => true,
-                       :length => {:within => MIN_LENGTH_OF_PASSWORD .. MAX_LENGTH_OF_PASSWORD},
+                       :length       => {:within => MIN_LENGTH_OF_PASSWORD .. MAX_LENGTH_OF_PASSWORD},
                        :if => :password_required?
 
   before_save :encrypt_new_password
@@ -41,13 +41,13 @@ class User < ActiveRecord::Base
   # 書き込み権限があるか評価する
   # 返り値 :: 書き込み権限があれば true、なければ false
   def writer?
-    return is_writer
+    return respond_to?(:is_writer) && is_writer
   end
 
   # 管理者権限があるか評価する
   # 返り値 :: 管理者権限があれば true、なければ false
   def administrator?
-    return is_administrator
+    return respond_to?(:is_administrator) && is_administrator
   end
 
   protected
