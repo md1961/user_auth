@@ -1,7 +1,8 @@
 
-DIRECTORIES_TO_LOAD_FROM = %w(models controllers helpers)
+DIRECTORIES_TO_LOAD_FROM = %w(models models/user_auth_kuma controllers helpers)
 
 DIRECTORIES_TO_LOAD_FROM.each do |dir|
+  dir.gsub!('/', File::SEPARATOR)
   path = File.join(File.dirname(__FILE__), 'app', dir)
   $LOAD_PATH << path
   ActiveSupport::Dependencies.autoload_paths << path
