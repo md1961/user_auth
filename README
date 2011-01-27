@@ -14,6 +14,8 @@ UserAuth
     $ rake db:sessions:create
     $ rake db:migrate
 
+  同様の手順で既に DB テーブルを作成済みの場合は、そのまま使える。
+
 2. session 関連のルーティングを設定する
 
   config/routes.rb に下記を追加する。
@@ -21,6 +23,17 @@ UserAuth
     match '/login'  => "sessions#new"    , :as => :login
     match '/logout' => "sessions#destroy", :as => :logout
     resource :session
+
+  さらに下記を追加する。
+
+    root :to => "(controller)#(action)"
+
+  :to の値にはログイン成功後の表示先を指定するが、このコントローラに
+
+    before_filter :authenticate （あるいは authenticate_as_writer, authenticate_as_administrator）
+
+  が記述されていないと認証なしにアクションが実行されてしまうので注意する。
+  他の認証が必要なコントローラについても同様の記述を追加する。
 
 3. session データを DB に保存するための設定をする
 
@@ -61,7 +74,8 @@ UserAuth
 
 5. ユーザ定義の定数ファイルを用意する
   
-  下記の内容のファイルを config/initializers の下に適当なファイル名で用意する。
+  下記の内容のファイルを config/initializers の下に適当なファイル名
+  （例えば 00_user_constant.rb など）で用意する。
   数値自体は任意の値に設定する。
 
     module UserConstant
@@ -72,6 +86,8 @@ UserAuth
     end
 
 6. app/views/sessions/new.html.erb を用意する
+
+  ...(Under Construction)...
   
 
 Example
