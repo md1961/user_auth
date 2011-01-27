@@ -1,5 +1,11 @@
 
-DIRECTORIES_TO_LOAD_FROM = %w(models models/user_auth_kuma controllers helpers)
+DIRECTORIES_TO_LOAD_FROM = %w(
+  models
+  models/user_auth_kuma
+  controllers
+  views
+  helpers
+  )
 
 DIRECTORIES_TO_LOAD_FROM.each do |dir|
   dir.gsub!('/', File::SEPARATOR)
