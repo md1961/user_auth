@@ -47,6 +47,11 @@ UserAuth
 
   の一文のコメント開始文字 # を削除して有効にする。
 
+  さらに ApplicationController の protect_from_forgery 文から、下記のようにコメント開始文字 # を
+  削除して :secret => 以下を有効にし、:secret の値に外部からわからないような秘密の文字列を設定する。
+
+    protect_from_forgery # :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
+
 4. モデル User を用意する
 
   下記のように UserAuthKuma::User を継承する。
