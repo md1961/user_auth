@@ -73,7 +73,7 @@ UserAuth
     is_administrator  boolean
 
 5. ユーザ定義の定数ファイルを用意する
-  
+
   下記の内容のファイルを config/initializers の下に適当なファイル名
   （例えば 00_user_constant.rb など）で用意する。
   数値自体は任意の値に設定する。
@@ -89,7 +89,50 @@ UserAuth
 
   lib/app/views/sessions/_new_user_auth.html.erb をコピーして作ってください。
   そのうち、もっといいやり方を考えます。
-  
+
+  上記ファイルを使った場合は、下記の箇所をリテラル文字列に書き換えるか、あるいは
+  config/locales ディレクトリに現在のロケール用の「翻訳用ファイル」(translation
+  file) を用意する必要がある。
+
+    t("helpers.page_title.sessions.new")
+    t("helpers.label.session.name")
+    t("helpers.label.session.password")
+    t("helpers.submit.login")
+
+  「翻訳用ファイル」を使って日本語を表示する場合は config/application.rb に
+  以下を追加して、
+
+    config.i18n.default_locale = :ja
+
+  config/locales ディレクトリに ja.yml を用意する。一般的用途のファイルは
+  下記よりダウンロードできる。
+
+    https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
+
+  件の箇所に対応する部分は下記のようになる。もちろん上記の t("...") 内の記述に
+  対応してさえいればどのような形式でも構わない。
+
+    ja:
+      ......
+
+      helpers:
+        ......
+
+        submit:
+          ......
+          login: "ログイン"
+
+        page_title:
+          ......
+          sessions:
+            new: "ログインしてください"
+          ......
+
+        label:
+          session:
+            name: "ユーザ名"
+            password: "パスワード"
+          ......
 
 Example
 =======
@@ -97,4 +140,5 @@ Example
 Example goes here.
 
 
-Copyright (c) 2011 [name of Japan Petroleum Exploration co., ltd.], released under the MIT license
+Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
+
