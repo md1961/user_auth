@@ -5,22 +5,22 @@ class ActionController::Base
     # ログイン手続きを経ない不正なアクセスを遮断するためのフィルタ・メソッド。
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインしていれば true、していなければ false（同時にログイン画面にリダイレクトする）
-    def authenticate
-      return logged_in? ? true : access_denied
+    def authenticate(also_must_be_true=true)
+      return logged_in? && also_must_be_true ? true : access_denied
     end
 
     # ログイン手続きを経ない、かつ書き込み権限を持たない不正なアクセスを遮断するためのフィルタ・メソッド。
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインして、かつ書き込み権限を持てば true、なければ false（同時にログイン画面にリダイレクトする）
     def authenticate_as_writer
-      return logged_in? && current_user.respond_to?(:writer?) && current_user.writer? ? true : access_denied
+      return authenticate(current_user.respond_to?(:writer?) && current_user.writer?)
     end
 
     # ログイン手続きを経ない、かつ管理者権限を持たない不正なアクセスを遮断するためのフィルタ・メソッド。
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインして、かつ管理者権限を持てば true、なければ false（同時にログイン画面にリダイレクトする）
     def authenticate_as_administrator
-      return logged_in? && current_user.respond_to?(:administrator?) && current_user.administrator? ? true : access_denied
+      return authenticate(current_user.respond_to?(:administrator?) && current_user.administrator?)
     end
 
     # 現在のログインユーザを返す
