@@ -178,16 +178,32 @@ class TestsControllerTest < ActionController::TestCase
     #TODO: How can we test "return false"?
   end
 
+  KEY_FOR_USER_ID                  = TestsController::KEY_FOR_USER_ID
   KEY_FOR_DATETIME_TIMEOUT_CHECKED = TestsController::KEY_FOR_DATETIME_TIMEOUT_CHECKED
+  SESSION_TIMEOUT_IN_MIN           = UserConstant::SESSION_TIMEOUT_IN_MIN
+
+  NOW      = Time.utc(2011, 2, 2, 0, 0, 0)  # 2011-2-2 00:00:00
   NOW_MOCK = :time_test
 
-  def test_check_timeout
+  def test_check_timeout_with_datetime_checked_of_nil
     Time.override_now(NOW_MOCK)
-    get :get_check_timeout, {}, KEY_FOR_DATETIME_TIMEOUT_CHECKED => nil
+    get :get_check_timeout, {}, KEY_FOR_USER_ID => :non_nil, KEY_FOR_DATETIME_TIMEOUT_CHECKED => nil
     Time.restore_now
 
     assert_redirected_to '/login'
     assert_equal(NOW_MOCK, session[KEY_FOR_DATETIME_TIMEOUT_CHECKED], "session[:#{KEY_FOR_DATETIME_TIMEOUT_CHECKED}]")
+    assert_equal(:non_nil, session[KEY_FOR_USER_ID]                 , "session[:#{KEY_FOR_USER_ID}]")
+  end
+
+  def test_check_timeout_for_timed_out
+    Time.override_now(NOW)
+    too_long_ago = NOW - (SESSION_TIMEOUT_IN_MIN + 1).minutes
+    get :get_check_timeout, {}, KEY_FOR_USER_ID => :non_nil, KEY_FOR_DATETIME_TIMEOUT_CHECKED => too_long_ago
+    Time.restore_now
+
+    assert_redirected_to '/login'
+    assert_nil(session[KEY_FOR_DATETIME_TIMEOUT_CHECKED], "session[:#{KEY_FOR_DATETIME_TIMEOUT_CHECKED}]")
+    assert_nil(session[KEY_FOR_USER_ID]                 , "session[:#{KEY_FOR_USER_ID}]")
   end
 
   private
