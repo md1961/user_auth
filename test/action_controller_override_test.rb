@@ -206,6 +206,17 @@ class TestsControllerTest < ActionController::TestCase
     assert_nil(session[KEY_FOR_USER_ID]                 , "session[:#{KEY_FOR_USER_ID}]")
   end
 
+  def test_check_timeout_barely_not_timed_out
+    Time.override_now(NOW)
+    barely_not_too_long_ago = NOW - SESSION_TIMEOUT_IN_MIN.minutes + 5.seconds
+    get :get_check_timeout, {}, KEY_FOR_USER_ID => :non_nil, KEY_FOR_DATETIME_TIMEOUT_CHECKED => barely_not_too_long_ago
+    Time.restore_now
+
+    assert_redirected_to '/login'
+    assert_equal(NOW     , session[KEY_FOR_DATETIME_TIMEOUT_CHECKED], "session[:#{KEY_FOR_DATETIME_TIMEOUT_CHECKED}]")
+    assert_equal(:non_nil, session[KEY_FOR_USER_ID]                 , "session[:#{KEY_FOR_USER_ID}]")
+  end
+
   private
 
     def override_current_user(retval)
