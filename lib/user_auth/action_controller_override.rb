@@ -1,11 +1,15 @@
 
 class ActionController::Base
+
+  KEY_FOR_USER_ID = :user_id
+
   protected
 
     # ログイン手続きを経ない不正なアクセスを遮断するためのフィルタ・メソッド。
     # アクセスを遮断したいコントローラの before_filter に設定する
     # 返り値 :: ログインしていれば true、していなければ false（同時にログイン画面にリダイレクトする）
     def authenticate(also_must_be_true=true)
+      check_timeout
       return logged_in? && also_must_be_true ? true : access_denied
     end
 
@@ -26,7 +30,7 @@ class ActionController::Base
     # 現在のログインユーザを返す
     # 返り値 :: 現在のログインユーザ。ログインしていなければ nil
     def current_user
-      user_id = session[:user_id]
+      user_id = session[KEY_FOR_USER_ID]
       return nil unless user_id
       return @current_user ||= User.find(user_id)
     end
@@ -45,6 +49,22 @@ class ActionController::Base
     # 返り値 :: 常に false
     def access_denied
       redirect_to login_path and return false
+    end
+
+    KEY_FOR_DATETIME_TIMEOUT_CHECKED = :datetime_timeout_checked
+
+    # セッションタイムアウトを起こしていないかチェックする
+    def check_timeout
+      timeout = UserConstant::SESSION_TIMEOUT_IN_MIN
+      datetime_checked = session[KEY_FOR_DATETIME_TIMEOUT_CHECKED]
+      if datetime_checked && datetime_checked < timeout.minutes.ago 
+        reset_session
+
+        flash[:notice] = t("helpers.notice.session.timeout") % {timeout: timeout}
+        logger.debug "ActionController::Base#check_timeout(): Session had been timed out"
+      else
+        session[KEY_FOR_DATETIME_TIMEOUT_CHECKED] = Time.now
+      end
     end
 end
 

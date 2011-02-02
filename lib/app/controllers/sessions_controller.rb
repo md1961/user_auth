@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   # <em>params[:password]</em> : パスワード
   def create
     if user = User.authenticate(params[:name], params[:password])
-      session[:user_id] = user.id
+      session[KEY_FOR_USER_ID] = user.id
       redirect_to root_path
     else
       flash.now[:alert] = t("helpers.notice.session.invalid_login")

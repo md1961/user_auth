@@ -65,12 +65,11 @@ UserAuth
     name             string
     hashed_password  string
 
-  書き込み権限、管理者権限を制御したいときは、それぞれ下記のカラムも用意する。
+  書き込み権限、管理者権限を制御したいときは、それぞれ下記の引数を取らない
+  メソッドを用意する。
 
-    カラム名          データ型
-   ----------------------------
-    is_writer         boolean
-    is_administrator  boolean
+    writer?()        : 書き込み権限があれば true、なければ false を返す
+    administrator?() : 管理者権限があれば true、なければ false を返す
 
 5. ユーザ定義の定数ファイルを用意する
 
@@ -79,6 +78,8 @@ UserAuth
   数値自体は任意の値に設定する。
 
     module UserConstant
+      SESSION_TIMEOUT_IN_MIN = 30
+
       MIN_LENGTH_OF_NAME     =  5
       MAX_LENGTH_OF_NAME     = 50
       MIN_LENGTH_OF_PASSWORD =  4
@@ -134,10 +135,26 @@ UserAuth
             password: "パスワード"
           ......
 
-Example
-=======
+使用方法
+========
 
-Example goes here.
+アクセス制限をかけたいコントローラに、例えば、下記のような記述をする。
+
+  class LimitedAccessController < ApplicationController
+    before_filter :authenticate
+    before_filter :authenticate_as_writer, :only => [:new, :edit, :create, :update, :destroy]
+    before_filter :authenticate_as_administrator, :only => [:destroy]
+
+    ...
+
+この場合は、すべてのアクションに先立ってユーザ認証が必要になる。new, edit, create, update,
+destroy については、メソッド writer? が true を返すユーザのみがユーザ認証を経たのちに アクセス
+可能になり、さらに destroy はメソッド administrator? が true に設定されたユーザのみに 制限が
+かかる。メソッド writer? や administrator? がクラス User に存在しない場合は、各々アクセスは
+できない。
+
+認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作をしないまま
+経過すると、自動的にログアウトされる。
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
