@@ -8,6 +8,11 @@ class TestsController < ActionController::Base
   def get_authenticate_as_administrator; authenticate_as_administrator; end
   def get_current_user                 ; current_user                 ; end
   def get_access_denied                ; access_denied                ; end
+
+  def get_check_timeout
+    check_timeout
+    redirect_to login_path
+  end
 end
 
 
@@ -173,6 +178,18 @@ class TestsControllerTest < ActionController::TestCase
     #TODO: How can we test "return false"?
   end
 
+  KEY_FOR_DATETIME_TIMEOUT_CHECKED = TestsController::KEY_FOR_DATETIME_TIMEOUT_CHECKED
+  NOW_MOCK = :time_test
+
+  def test_check_timeout
+    Time.override_now(NOW_MOCK)
+    get :get_check_timeout, {}, KEY_FOR_DATETIME_TIMEOUT_CHECKED => nil
+    Time.restore_now
+
+    assert_redirected_to '/login'
+    assert_equal(NOW_MOCK, session[KEY_FOR_DATETIME_TIMEOUT_CHECKED], "session[:#{KEY_FOR_DATETIME_TIMEOUT_CHECKED}]")
+  end
+
   private
 
     def override_current_user(retval)
@@ -230,7 +247,7 @@ class User
     @@user_mock = user_mock
     User.instance_eval do
       alias :find_original :find
-      alias :find          :find_override
+      alias :find          :find_overridden
     end
   end
 
@@ -240,8 +257,28 @@ class User
     end
   end
 
-  def self.find_override(id)
+  def self.find_overridden(id)
     @@user_mock
+  end
+end
+
+class Time
+  def self.override_now(time)
+    @@time = time
+    Time.instance_eval do
+      alias :now_original :now
+      alias :now          :now_overridden
+    end
+  end
+
+  def self.restore_now
+    Time.instance_eval do
+      alias :now :now_original 
+    end
+  end
+
+  def self.now_overridden
+    @@time
   end
 end
 

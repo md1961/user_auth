@@ -1,7 +1,8 @@
 
 class ActionController::Base
 
-  KEY_FOR_USER_ID = :user_id
+  KEY_FOR_USER_ID                  = :user_id
+  KEY_FOR_DATETIME_TIMEOUT_CHECKED = :datetime_timeout_checked
 
   protected
 
@@ -51,8 +52,6 @@ class ActionController::Base
       redirect_to login_path and return false
     end
 
-    KEY_FOR_DATETIME_TIMEOUT_CHECKED = :datetime_timeout_checked
-
     # セッションタイムアウトを起こしていないかチェックする
     def check_timeout
       timeout = UserConstant::SESSION_TIMEOUT_IN_MIN
@@ -60,7 +59,7 @@ class ActionController::Base
       if datetime_checked && datetime_checked < timeout.minutes.ago 
         reset_session
 
-        flash[:notice] = t("helpers.notice.session.timeout") % {timeout: timeout}
+        flash[:notice] = t(UserConstant::KEY_FOR_SESSION_TIMEOUT_NOTICE) % {timeout: timeout}
         logger.debug "ActionController::Base#check_timeout(): Session had been timed out"
       else
         session[KEY_FOR_DATETIME_TIMEOUT_CHECKED] = Time.now
