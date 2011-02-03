@@ -180,5 +180,33 @@ destroy については、メソッド writer? が true を返すユーザのみ
 経過すると、自動的にログアウトされる。
 
 
+ファイル
+========
+
+インストールされるファイルは以下のとおり。
+
+  init.rb
+  install.rb
+  MIT-LICENSE
+  Rakefile
+  README
+  uninstall.rb
+  lib/user_auth.rb
+  lib/user_auth/action_controller_override.rb
+  lib/app/controllers/sessions_controller.rb
+  lib/app/helpers/sessions_helper.rb
+  lib/app/models/sha1_salted_encryptor.rb
+  lib/app/models/user_auth_kuma
+  lib/app/models/user_auth_kuma/user.rb
+  lib/app/views/sessions
+  lib/app/views/sessions/_new_user_auth.html.erb
+  test/action_controller_override_test.rb
+  test/sessions_controller_test.rb
+  test/sessions_helper_test.rb
+  test/sha1_salted_encryptor_test.rb
+  test/test_helper.rb
+  test/user_auth_test.rb
+
+
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
 
