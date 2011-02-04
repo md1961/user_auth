@@ -30,7 +30,8 @@ UserAuth
 
   :to の値にはログイン成功後の表示先を指定するが、このコントローラに
 
-    before_filter :authenticate （あるいは authenticate_as_writer, authenticate_as_administrator）
+    before_filter :authenticate （あるいは authenticate_as_writer,
+                                  authenticate_as_administrator）
 
   が記述されていないと認証なしにアクションが実行されてしまうので注意する。
   他の認証が必要なコントローラについても同様の記述を追加する。
@@ -39,7 +40,7 @@ UserAuth
 
   config/initializers/session_store.rb を編集し、
 
-    {アプリ名}::Application.config.session_store :cookie_store, :key => '_hoge_session'
+    {アプリ名}::Application.config.session_store :cookie_store, :key => ...
 
   の一文をコメントアウトして、
  
@@ -47,10 +48,12 @@ UserAuth
 
   の一文のコメント開始文字 # を削除して有効にする。
 
-  さらに ApplicationController の protect_from_forgery 文から、下記のようにコメント開始文字 # を
-  削除して :secret => 以下を有効にし、:secret の値に外部からわからないような秘密の文字列を設定する。
+  さらに ApplicationController の protect_from_forgery 文から、下記のように
+  コメント開始文字 # を削除して :secret => 以下を有効にし、:secret の値に
+  外部からわからないような秘密の文字列を設定する。
 
-    protect_from_forgery # :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
+    protect_from_forgery :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
+                                     # この文字列はそのまま使わないこと！
 
 4. モデル User を用意する
 
@@ -58,7 +61,7 @@ UserAuth
 
     class User < UserAuthKuma::User
 
-  テーブルのカラムは下記を用意する
+  DBテーブル users のカラムは下記を用意する。
 
     カラム名         データ型
    --------------------------
@@ -70,6 +73,9 @@ UserAuth
 
     writer?()        : 書き込み権限があれば true、なければ false を返す
     administrator?() : 管理者権限があれば true、なければ false を返す
+
+  boolean のカラム is_writer, is_administrator を用意して、上記メソッドを
+  それぞれ対応する属性を返すように定義すればよい。
 
 5. ユーザ定義の定数ファイルを用意する
 
@@ -85,33 +91,61 @@ UserAuth
       MIN_LENGTH_OF_PASSWORD =  4
       MAX_LENGTH_OF_PASSWORD = 20
 
+      KEY_FOR_LOGGED_OUT_NOTICE      = "helpers.notice.session.logged_out"
+      KEY_FOR_INVALID_LOGIN_NOTICE   = "helpers.notice.session.invalid_login"
       KEY_FOR_SESSION_TIMEOUT_NOTICE = "helpers.notice.session.timeout"
     end
 
   最後の KEY_FOR_SESSION_TIMEOUT_NOTICE の値については後述する。
 
-6. app/views/sessions/new.html.erb を用意する
+6. app/views/layouts/application.html.erb にログアウト用リンクなどを追加する。
 
-  ==========================================================================
-  | 現段階では lib/app/views/sessions/_new_user_auth.html.erb をコピーして |
-  | 作ってください。                                                       |
-  | そのうち、もっといいやり方を考えます。                                 |
-  ==========================================================================
+  下記、あるいは同等なコードを適当な箇所に追加する（このファイルである必要はない）。
 
-  上記ファイルを使う必要はないが、フォームをサブミット先は session_path に
+    <% if logged_in? -%>
+      <%= link_to t("helpers.link.logout"), logout_path %>
+    <% end -%>
+
+  また、yield 文の前あたりに下記を追加する。
+
+    <%= content_tag :p, notice, :class => "notice" if notice.present? %>
+    <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
+
+7. app/views/sessions/new.html.erb を用意する
+
+  ===================================================================
+  | 現段階では lib/app/views/sessions/_new_user_auth.html.erb に    |
+  | シンボリック・リンクを張るか、あるいはコピーして使ってください。|
+  | そのうち、もっといいやり方を考えます。                          |
+  ===================================================================
+
+  上記ファイルを使う必要はないが、フォームのサブミット先は session_path に
   する必要がある。
 
-  上記ファイルを使った場合は、下記の箇所をリテラル文字列に書き換えるか、あるいは
-  config/locales ディレクトリに現在のロケール用の「翻訳用ファイル」(translation
-  file) を用意する必要がある。
+8. 国際化対応の翻訳ファイルを用意する
 
-    t("helpers.page_title.sessions.new")
-    t("helpers.label.session.name")
-    t("helpers.label.session.password")
-    t("helpers.submit.login")
+  下記の箇所の表示文字列は国際化対応としてあるので、config/locales
+  ディレクトリに現在のロケール用の「翻訳ファイル」(translation file)
+  を用意する必要がある。
 
-  「翻訳用ファイル」を使って日本語を表示する場合は config/application.rb に
-  以下を追加して、
+    lib/app/controllers/sessions_controller.rb (SessionController)
+      "helpers.notice.session.logged_out"
+      "helpers.notice.session.invalid_login"
+
+    lib/app/views/sessions/_new_user_auth.html.erb
+      "helpers.page_title.sessions.new"
+      "helpers.label.session.name"
+      "helpers.label.session.password"
+      "helpers.submit.login"
+
+    UserConstant::KEY_FOR_SESSION_TIMEOUT_NOTICE の値として...
+      "helpers.notice.session.timeout"
+      （文字列表示箇所は lib/user_auth/action_controller_override.rb）
+
+    6. で app/views/layouts/application.html.erb に追加
+      "helpers.link.logout"
+
+  日本語を表示する場合は config/application.rb に以下を追加して、
 
     config.i18n.default_locale = :ja
 
@@ -145,17 +179,28 @@ UserAuth
             password: "パスワード"
           ......
 
+        link:
+          logout: "ログアウト"
+          change_password: "パスワードの変更"
+          ......
+
         notice:
           ......
           session:
-            ......
+            logged_in: "ログインしました"
+            logged_out: "ログアウトしました"
+            invalid_login: "ユーザ名／パスワードの組み合わせが正しくありません"
             timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
 
 
   先にあった KEY_FOR_SESSION_TIMEOUT_NOTICE の値を "helpers.notice.session.timeout"
-  のまま使用した場合は上記のように ja.yml に指定する。%{timeout} の部分には UserConstant
-  で SESSION_TIMEOUT_IN_MIN に指定した値が入る。KEY_FOR_SESSION_TIMEOUT_NOTICE の値は
-  ja.yml に対応するものがあればどのような形でも構わない。
+  のまま使用した場合は上記のように ja.yml に指定する。%{timeout} の部分には
+  UserConstant で SESSION_TIMEOUT_IN_MIN に指定した値が入る。
+  KEY_FOR_SESSION_TIMEOUT_NOTICE の値は ja.yml に対応するものがあれば
+  どのような形でも構わない。
+  先にあった KEY_FOR_SESSION_TIMEOUT_NOTICE の値を "helpers.notice.session.timeout"
+  "helpers.notice.session.logged_out" と "helpers.notice.session.invalid_login" は
+  本プラグイン中の SessionController
 
 
 使用方法
@@ -170,14 +215,19 @@ UserAuth
 
     ...
 
-この場合は、すべてのアクションに先立ってユーザ認証が必要になる。new, edit, create, update,
-destroy については、メソッド writer? が true を返すユーザのみがユーザ認証を経たのちに アクセス
-可能になり、さらに destroy はメソッド administrator? が true に設定されたユーザのみに 制限が
-かかる。メソッド writer? や administrator? がクラス User に存在しない場合は、各々アクセスは
-できない。
+この場合は、すべてのアクションに先立ってユーザ認証が必要になる。new, edit, create,
+update, destroy については、メソッド writer? が true を返すユーザのみがユーザ認証を
+経たのちに アクセス可能になり、さらに destroy はメソッド administrator? が true に
+設定されたユーザのみに 制限がかかる。メソッド writer? や administrator? がクラス
+User に存在しない場合は、各々アクセスはできない。
 
-認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作をしないまま
-経過すると、自動的にログアウトされる。
+認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
+しないまま 経過すると、自動的にログアウトされる。
+
+また、下記のヘルパー・メソッドが使えるようになっている。
+
+  current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
+  logged_in?()   : ログインしているか評価する。ログインしていれば true、していなければ false を返す
 
 
 ファイル
