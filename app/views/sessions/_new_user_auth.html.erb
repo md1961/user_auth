@@ -1,0 +1,19 @@
+
+<h1><%= t("helpers.page_title.sessions.new") %></h1>
+
+<% size_of_field = 20 -%>
+
+<%= form_tag session_path do %>
+  <div class="field">
+    <%= label_tag t("helpers.label.session.name") %><br />
+    <%= text_field_tag     :name    , '', :size => size_of_field %>
+  </div>
+  <div class="field">
+    <%= label_tag t("helpers.label.session.password") %><br />
+    <%= password_field_tag :password, '', :size => size_of_field %>
+  </div>
+  <div class="actions">
+    <%= submit_tag t("helpers.submit.login") %>
+  </div>
+<% end -%>
+
