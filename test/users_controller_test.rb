@@ -85,5 +85,30 @@ class TestTargetControllerTest < ActionController::TestCase
       return user_mock
     end
     private :make_user_mock_to_be_updated_successfully
+
+  def test_update_password_for_failed_update
+    user_mock = make_user_mock_to_be_updated_unsuccessfully
+    @controller.instance_variable_set(:@current_user, user_mock)
+
+    get :update_password, :user => {}
+    current_user = assigns(:current_user)
+
+    assert_response :success
+    assert_template :change_password
+    assert_equal(User, current_user.class, "Class of @current_user")
+  end
+
+    def make_user_mock_to_be_updated_unsuccessfully
+      user_mock = User.new
+      def user_mock.authenticated?(old_password)
+        true
+      end
+      def user_mock.update_attributes(params)
+        false
+      end
+
+      return user_mock
+    end
+    private :make_user_mock_to_be_updated_unsuccessfully
 end
 
