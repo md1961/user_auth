@@ -16,7 +16,7 @@ class UsersController < ApplicationController
       @current_user.errors.add(:old_password, t("helpers.alert.user.old_password_not_match"))
       render :change_password
     elsif @current_user.update_attributes(params[:user])
-      redirect_to projects_path, :notice => t("helpers.notice.user.updated")
+      redirect_to root_path, :notice => t("helpers.notice.user.updated")
     else
       render :change_password
     end
