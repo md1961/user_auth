@@ -14,11 +14,11 @@ class UsersController < ApplicationController
   def update_password
     if ! @current_user.authenticated?(params[:user][:old_password])
       @current_user.errors.add(:old_password, t("helpers.alert.user.old_password_not_match"))
-      render :action => 'change_password'
+      render :change_password
     elsif @current_user.update_attributes(params[:user])
       redirect_to projects_path, :notice => t("helpers.notice.user.updated")
     else
-      render :action => 'change_password'
+      render :change_password
     end
   end
 end
