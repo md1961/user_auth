@@ -4,12 +4,22 @@ UserAuth
 ユーザ認証を行う機能を追加するプラグイン
 
 
+機能
+====
+
+- before_filter :authenticate（あるいは authenticate_as_writer、
+  または authenticate_as_administrator）の対象のアクションに
+  認証手続きなしに、あるいは権限不足でアクセスするとログイン画面
+  （名前付きルート login_path）にリダイレクトする。
+
+
 準備
 ====
 
 1. session データを保存する DB テーブルを作成する
 
-  下記コマンドでマイグレーション・ファイルを生成し、マイグレートしてテーブルを作成する。
+  下記コマンドでマイグレーション・ファイルを生成し、マイグレートを
+  実行してテーブルを作成する。
 
     $ rake db:sessions:create
     $ rake db:migrate
@@ -22,13 +32,20 @@ UserAuth
 
     match '/login'  => "sessions#new"    , :as => :login
     match '/logout' => "sessions#destroy", :as => :logout
-    resource :session
 
-  さらに下記を追加する。
+    resource :session, :only => [:new, :create, :destroy]
+
+    resources :users do
+      member do
+        get 'change_password'
+        put 'update_password'
+      end
+    end
 
     root :to => "(controller)#(action)"
 
-  :to の値にはログイン成功後の表示先を指定するが、このコントローラに
+  root の :to の値にはログイン成功後の表示先を指定するが、この
+  コントローラに
 
     before_filter :authenticate （あるいは authenticate_as_writer,
                                   authenticate_as_administrator）
