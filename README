@@ -111,10 +111,16 @@ UserAuth
 5. UsersController を用意する
 
   下記のように UserAuthKuma::UsersController を継承する。
+  特に before_filter :authenticate (あるいは :authenticate_as_writer,
+  :authenticate_as_administrator）の設定はセキュリティ上重要なので
+  必ず漏れがないように注意する。
 
     class UsersController < UserAuthKuma::UsersController
+      before_filter :authenticate, :only => [:change_password, :update_password]
+      before_filter :authenticate_as_administrator,
+                                 :except => [:change_password, :update_password]
 
-  UserAuthKuma::UsersController には下記のメソッドが実装されている。
+  スーパークラスの UserAuthKuma::UsersController には下記のメソッドが実装されている。
 
     change_password() : view 'change_password' をレンダリングする
     update_password() : view 'change_password' からデータを受け取って
