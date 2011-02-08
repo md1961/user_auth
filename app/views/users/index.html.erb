@@ -1,0 +1,21 @@
+
+<h1><%= t("helpers.page_title.users.index") %></h1>
+
+<table id="table_users" class="table_base">
+  <tr>
+    <% @attribute_names.each do |attr_name| -%>
+      <th><%= User.human_attribute_name(attr_name) %></th>
+    <% end -%>
+  </tr>
+
+  <% @users.each do |user| -%>
+    <tr>
+      <% @attribute_names.each do |attr_name| -%>
+        <td align="<%= attribute_align(attr_name) %>">
+          <%= attribute_value(user, attr_name) %>
+        </td>
+      <% end -%>
+    </tr>
+  <% end -%>
+</table>
+

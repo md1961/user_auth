@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   # ユーザの一覧を出力する
   def index
     @users = User.find(:all)
+    @attribute_names = %w(id name is_writer is_administrator)
   end
 
   # パスワード変更画面を表示する

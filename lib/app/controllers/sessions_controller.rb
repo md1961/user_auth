@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       redirect_to root_path
     else
       flash.now[:alert] = t(UserConstant::KEY_FOR_INVALID_LOGIN_NOTICE)
-      render :action => 'new'
+      render :new
     end
   end
 
