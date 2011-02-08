@@ -7,10 +7,25 @@ UserAuth
 機能
 ====
 
-- before_filter :authenticate（あるいは authenticate_as_writer、
-  または authenticate_as_administrator）の対象のアクションに
+- before_filter :authenticate（あるいは :authenticate_as_writer、
+  または :authenticate_as_administrator）の対象となるアクションに
   認証手続きなしに、あるいは権限不足でアクセスするとログイン画面
   （名前付きルート login_path）にリダイレクトする。
+
+    authenticate                  : ユーザ認証を必要とする
+    authenticate_as_writer        : ユーザ認証と書き込み権限を必要とする
+    authenticate_as_administrator : ユーザ認証と管理者権限を必要とする
+
+  書き込み権限、および管理者権限はそれぞれ User#writer?(),
+  User#administrator?() で確認される。
+
+- change_password_user_path(current_user) でパスワード変更画面が
+  表示される。
+
+- 下記のヘルパー・メソッドが追加される。
+
+    logged_in?()   : ログインしているか評価する
+    current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
 
 
 準備
@@ -26,7 +41,26 @@ UserAuth
 
   同様の手順で既に DB テーブルを作成済みの場合は、そのまま使える。
 
-2. session 関連のルーティングを設定する
+2. session データを DB に保存するための設定をする
+
+  config/initializers/session_store.rb を編集し、
+
+    {アプリ名}::Application.config.session_store :cookie_store, :key => ...
+
+  の一文をコメントアウトして、
+ 
+    {アプリ名}::Application.config.session_store :active_record_store
+
+  の一文のコメント開始文字 # を削除して有効にする。
+
+  さらに ApplicationController の protect_from_forgery 文から、下記のように
+  コメント開始文字 # を削除して :secret => 以下を有効にし、:secret の値に
+  外部からわからないような秘密の文字列を設定する。
+
+    protect_from_forgery :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
+                                     # この文字列をそのまま使わないこと！
+
+3. session, user 関連、および root のルーティングを設定する
 
   config/routes.rb に下記を追加する。
 
@@ -44,33 +78,13 @@ UserAuth
 
     root :to => "(controller)#(action)"
 
-  root の :to の値にはログイン成功後の表示先を指定するが、この
-  コントローラに
+  root_path はログイン成功後のリダイレクト先になるが、 このアクションが
 
-    before_filter :authenticate （あるいは authenticate_as_writer,
-                                  authenticate_as_administrator）
+    before_filter :authenticate （あるいは :authenticate_as_writer,
+                                  :authenticate_as_administrator）
 
-  が記述されていないと認証なしにアクションが実行されてしまうので注意する。
-  他の認証が必要なコントローラについても同様の記述を追加する。
-
-3. session データを DB に保存するための設定をする
-
-  config/initializers/session_store.rb を編集し、
-
-    {アプリ名}::Application.config.session_store :cookie_store, :key => ...
-
-  の一文をコメントアウトして、
- 
-    {アプリ名}::Application.config.session_store :active_record_store
-
-  の一文のコメント開始文字 # を削除して有効にする。
-
-  さらに ApplicationController の protect_from_forgery 文から、下記のように
-  コメント開始文字 # を削除して :secret => 以下を有効にし、:secret の値に
-  外部からわからないような秘密の文字列を設定する。
-
-    protect_from_forgery :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
-                                     # この文字列はそのまま使わないこと！
+  の対象になっていないと認証なしにアクションが実行されてしまうので注意する。
+  認証が必要な、その他のコントローラについても同様の記述を追加する。
 
 4. モデル User を用意する
 
@@ -80,18 +94,18 @@ UserAuth
 
   DBテーブル users のカラムは下記を用意する。
 
-    カラム名         データ型
-   --------------------------
-    name             string
-    hashed_password  string
+    カラム名         データ型  用途
+   ------------------------------------------------------------
+    name             string    ユーザ名
+    hashed_password  string    ハッシュ値に変換されたパスワード
 
-  書き込み権限、管理者権限を制御したいときは、それぞれ下記の引数を取らない
-  メソッドを用意する。
+  書き込み権限、管理者権限を制御したいときは、引数を取らない下記のメソッドを
+  それぞれ用意する。
 
     writer?()        : 書き込み権限があれば true、なければ false を返す
     administrator?() : 管理者権限があれば true、なければ false を返す
 
-  boolean のカラム is_writer, is_administrator を用意して、上記メソッドを
+  boolean 型のカラム is_writer, is_administrator を用意して、上記メソッドを
   それぞれ対応する属性を返すように定義すればよい。
 
 5. UsersController を用意する
@@ -143,16 +157,13 @@ UserAuth
     <%= content_tag :p, notice, :class => "notice" if notice.present? %>
     <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
 
-8. app/views/sessions/new.html.erb を用意する
+8. sessions, users 用の VIEW を用意する
 
-  ===================================================================
-  | 現段階では lib/app/views/sessions/_new_user_auth.html.erb に    |
-  | シンボリック・リンクを張るか、あるいはコピーして使ってください。|
-  | そのうち、もっといいやり方を考えます。                          |
-  ===================================================================
-
-  上記ファイルを使う必要はないが、フォームのサブミット先は session_path に
-  する必要がある。
+  デフォルトの 'sessions#new', 'users#change_password' 
+  ...
+  を使いたくないときは app/views にそれぞれ用意する。
+  app/views 下の sessions や users に同名のファイルがあれば、そちらが
+  使われる。
 
 9. 国際化対応の翻訳ファイルを用意する
 
@@ -181,9 +192,17 @@ UserAuth
       "helpers.submit.change"
 TODO: => add sample below
 
+    UserConstant::KEY_FOR_LOGGED_OUT_NOTICE の値として...
+      "helpers.notice.session.logged_out"
+    UserConstant::KEY_FOR_INVALID_LOGIN_NOTICE の値として...
+      "helpers.notice.session.invalid_login"
+      （文字列使用箇所は lib/app/controllers/sessions_controller.rb）
+
     UserConstant::KEY_FOR_SESSION_TIMEOUT_NOTICE の値として...
       "helpers.notice.session.timeout"
-      （文字列表示箇所は lib/user_auth/action_controller_override.rb）
+      （文字列使用箇所は lib/user_auth/action_controller_override.rb）
+      （%{timeout} の部分には UserConstant で SESSION_TIMEOUT_IN_MIN に
+        指定した値が入る）
 
     6. で app/views/layouts/application.html.erb に追加
       "helpers.link.logout"
@@ -236,16 +255,6 @@ TODO: => add sample below
             timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
 
 
-  先にあった KEY_FOR_SESSION_TIMEOUT_NOTICE の値を "helpers.notice.session.timeout"
-  のまま使用した場合は上記のように ja.yml に指定する。%{timeout} の部分には
-  UserConstant で SESSION_TIMEOUT_IN_MIN に指定した値が入る。
-  KEY_FOR_SESSION_TIMEOUT_NOTICE の値は ja.yml に対応するものがあれば
-  どのような形でも構わない。
-  先にあった KEY_FOR_SESSION_TIMEOUT_NOTICE の値を "helpers.notice.session.timeout"
-  "helpers.notice.session.logged_out" と "helpers.notice.session.invalid_login" は
-  本プラグイン中の SessionController
-
-
 使用方法
 ========
 
@@ -269,8 +278,8 @@ User に存在しない場合は、各々アクセスはできない。
 
 また、下記のヘルパー・メソッドが使えるようになっている。
 
-  current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
   logged_in?()   : ログインしているか評価する。ログインしていれば true、していなければ false を返す
+  current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
 
 
 ファイル
@@ -278,27 +287,7 @@ User に存在しない場合は、各々アクセスはできない。
 
 インストールされるファイルは以下のとおり。
 
-  init.rb
-  install.rb
-  MIT-LICENSE
-  Rakefile
-  README
-  uninstall.rb
-  lib/user_auth.rb
-  lib/user_auth/action_controller_override.rb
-  lib/app/controllers/sessions_controller.rb
-  lib/app/helpers/sessions_helper.rb
-  lib/app/models/sha1_salted_encryptor.rb
-  lib/app/models/user_auth_kuma
-  lib/app/models/user_auth_kuma/user.rb
-  lib/app/views/sessions
-  lib/app/views/sessions/_new_user_auth.html.erb
-  test/action_controller_override_test.rb
-  test/sessions_controller_test.rb
-  test/sessions_helper_test.rb
-  test/sha1_salted_encryptor_test.rb
-  test/test_helper.rb
-  test/user_auth_test.rb
+  （必要か？ メンテナンスが面倒）
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
