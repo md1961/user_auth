@@ -3,6 +3,11 @@ module UserAuthKuma
 # モデル User の処理を行うコントローラ
 class UsersController < ApplicationController
 
+  # ユーザの一覧を出力する
+  def index
+    @users = User.find(:all)
+  end
+
   # パスワード変更画面を表示する
   def change_password
     # just render

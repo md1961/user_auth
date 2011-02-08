@@ -14,6 +14,19 @@ class TestTargetControllerTest < ActionController::TestCase
     end
   end
 
+  def test_index
+    get :index
+
+    assert_response :success
+    assert_template :index
+    users = assigns(:users)
+    assert_equal(Array, users.class, "Class of @users")
+    users.each_with_index do |user, index|
+      base_class_name = user.class.name.demodulize
+      assert_equal('User', base_class_name, "Class of @users[#{index}]")
+    end
+  end
+
   def test_change_password
     get :change_password
 
