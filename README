@@ -19,8 +19,11 @@ UserAuth
   書き込み権限、および管理者権限はそれぞれ User#writer?(),
   User#administrator?() で確認される。
 
-- change_password_user_path(current_user) でパスワード変更画面が
-  表示される。
+- change_password_user_path(current_user) に遷移することによりパスワード
+  変更画面が表示される。
+
+- users_path に遷移することによりユーザ一覧画面が表示される。
+  ユーザ一覧画面より、ユーザの新規作成・編集・削除を行うことができる。
 
 - 下記のヘルパー・メソッドが追加される。
 
@@ -181,13 +184,13 @@ UserAuth
       "helpers.notice.session.logged_out"
       "helpers.notice.session.invalid_login"
 
-    lib/app/views/sessions/new.html.erb
+    app/views/sessions/new.html.erb
       "helpers.page_title.sessions.new"
       "helpers.label.session.name"
       "helpers.label.session.password"
       "helpers.submit.login"
 
-    lib/app/views/users/change_password.html.erb
+    app/views/users/change_password.html.erb
       "helpers.page_title.users.change_password"
       "activerecord.model.user"
       "activerecord.errors.template.header.other"
@@ -196,6 +199,15 @@ UserAuth
       "helpers.label.user.new_password" (f.label :new_password)
       "helpers.label.user.password_confirmation" (f.label :password_confirmation)
       "helpers.submit.change"
+
+    app/views/users/index.html.erb
+      "helpers.page_title.users.index"
+      "helpers.link.user.new"
+
+    app/views/users/new.html.erb
+      "helpers.page_title.users.new"
+      "helpers.link.back"
+
 TODO: => add sample below
 
     UserConstant::KEY_FOR_LOGGED_OUT_NOTICE の値として...

@@ -3,10 +3,17 @@ module UserAuthKuma
 # モデル User の処理を行うコントローラ
 class UsersController < ApplicationController
 
+  ATTRIBUTE_NAMES_TO_LIST = %w(id name is_writer is_administrator).freeze
+
   # ユーザの一覧を出力する
   def index
     @users = User.find(:all)
-    @attribute_names = %w(id name is_writer is_administrator)
+    @attribute_names = ATTRIBUTE_NAMES_TO_LIST
+  end
+
+  # 新規作成画面を表示する
+  def new
+    @user = User.new
   end
 
   # パスワード変更画面を表示する

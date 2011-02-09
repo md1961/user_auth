@@ -19,12 +19,28 @@ class TestTargetControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_template :index
+
     users = assigns(:users)
     assert_equal(Array, users.class, "Class of @users")
     users.each_with_index do |user, index|
       base_class_name = user.class.name.demodulize
       assert_equal('User', base_class_name, "Class of @users[#{index}]")
     end
+    assert_equal(UserAuthKuma::UsersController::ATTRIBUTE_NAMES_TO_LIST,
+                 assigns(:attribute_names),
+                 "@attribute_names")
+  end
+
+  def test_new
+    get :new
+
+    assert_response :success
+    assert_template :new
+
+    user = assigns(:user)
+    base_class_name = user.class.name.demodulize
+    assert_equal('User', base_class_name, "Class of @user")
+    assert(user.new_record?, "@user should be a new record")
   end
 
   def test_change_password
