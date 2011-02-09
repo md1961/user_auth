@@ -1,0 +1,62 @@
+# Japanese translations for Ruby on Rails
+# by Akira Matsuda (ronnie@dio.jp)
+# AR error messages are basically taken from Ruby-GetText-Package. Thanks to Masao Mutoh.
+# contributors:
+#  - Tsutomu Kuroda (t-kuroda@oiax.jp)
+
+ja:
+  helpers:
+    page_title:
+      sessions:
+        new: "ログインしてください"
+      users:
+        index: "ユーザの一覧"
+        new: "新規ユーザの作成"
+        edit: "ユーザ「%{name}」の編集"
+        change_password: "ユーザ「%{name}」のパスワードを変更します"
+
+    label:
+      session:
+        name: "ユーザ名"
+        password: "パスワード"
+      user:
+        name: "ユーザ名"
+        password: "パスワード"
+        password_confirmation: "もう一度パスワード"
+        old_password: "現在のパスワード"
+        new_password: "新しいパスワード"
+        is_writer: "書き込み権限"
+        is_administrator: "管理者権限"
+
+    link:
+      logout: "ログアウト"
+      change_password: "パスワードの変更"
+      user:
+        index: "ユーザの一覧"
+        new: "新規ユーザの作成"
+
+    notice:
+      user:
+        created: "新しいユーザが追加されました"
+        updated: "ユーザの情報が更新されました"
+      session:
+        logged_in: "ログインしました"
+        logged_out: "ログアウトしました"
+        invalid_login: "ユーザ名／パスワードの組み合わせが正しくありません"
+        timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
+
+    alert:
+      user:
+        old_password_not_match: "現在のパスワードが違います"
+
+  activerecord:
+    model:
+      user: "ユーザ"
+
+    attributes:
+      user:
+        id: "ID"
+        name: "ユーザ名"
+        is_writer: "書き込み権限"
+        is_administrator: "管理者権限"
+

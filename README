@@ -228,52 +228,15 @@ TODO: => add sample below
     6. で app/views/layouts/application.html.erb に追加
       "helpers.link.logout"
 
-  日本語を表示する場合は config/application.rb に以下を追加して、
+  日本語を表示する場合は config/application.rb に以下を追加する。
 
     config.i18n.default_locale = :ja
+    config.i18n.load_path += Dir[Rails.root.join('vendor/plugins/user_auth/locales/**/*.{rb,yml}')]
 
-  config/locales ディレクトリに ja.yml を用意する。一般的用途のファイルは
-  下記よりダウンロードできる。
+  一般用途のファイルは下記よりダウンロードできるので、使用する場合は
+  config/locales ディレクトリに配置する。
 
     https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
-
-  件の箇所に対応する部分は下記のようになる。もちろん上記の t("...") 内の記述に
-  対応してさえいればどのような形式でも構わない。
-
-    ja:
-      ......
-
-      helpers:
-        ......
-
-        submit:
-          ......
-          login: "ログイン"
-
-        page_title:
-          ......
-          sessions:
-            new: "ログインしてください"
-          ......
-
-        label:
-          session:
-            name: "ユーザ名"
-            password: "パスワード"
-          ......
-
-        link:
-          logout: "ログアウト"
-          change_password: "パスワードの変更"
-          ......
-
-        notice:
-          ......
-          session:
-            logged_in: "ログインしました"
-            logged_out: "ログアウトしました"
-            invalid_login: "ユーザ名／パスワードの組み合わせが正しくありません"
-            timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
 
 
 使用方法
@@ -297,6 +260,11 @@ User に存在しない場合は、各々アクセスはできない。
 認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
 しないまま 経過すると、自動的にログアウトされる。
 
+下記のパスを使用すればユーザ管理画面に遷移する。
+
+  change_password_user_path : 現在のログインユーザのパスワード変更画面
+  users_path                : ユーザ一覧画面（ユーザの新規作成・編集・削除が行える）
+
 また、下記のヘルパー・メソッドが使えるようになっている。
 
   logged_in?()   : ログインしているか評価する。ログインしていれば true、していなければ false を返す
@@ -308,7 +276,58 @@ User に存在しない場合は、各々アクセスはできない。
 
 インストールされるファイルは以下のとおり。
 
-  （必要か？ メンテナンスが面倒）
+  .
+  |-- MIT-LICENSE
+  |-- README
+  |-- Rakefile
+  |-- app/
+  |   `-- views/
+  |       |-- sessions/
+  |       |   `-- new.html.erb
+  |       |-- test_target/
+  |       |   |-- change_password.html.erb
+  |       |   |-- edit.html.erb
+  |       |   |-- index.html.erb
+  |       |   `-- new.html.erb
+  |       `-- users/
+  |           |-- _form.html.erb
+  |           |-- change_password.html.erb
+  |           |-- edit.html.erb
+  |           |-- index.html.erb
+  |           `-- new.html.erb
+  |-- init.rb
+  |-- install.rb
+  |-- lib/
+  |   |-- app/
+  |   |   |-- controllers/
+  |   |   |   |-- sessions_controller.rb
+  |   |   |   `-- user_auth_kuma/
+  |   |   |       `-- users_controller.rb
+  |   |   |-- helpers/
+  |   |   |   |-- sessions_helper.rb
+  |   |   |   `-- user_auth_kuma/
+  |   |   |       `-- users_helper.rb
+  |   |   `-- models/
+  |   |       |-- sha1_salted_encryptor.rb
+  |   |       `-- user_auth_kuma/
+  |   |           `-- user.rb
+  |   |-- user_auth/
+  |   |   `-- action_controller_override.rb
+  |   `-- user_auth.rb
+  |-- locales/
+  |   `-- ja.yml
+  |-- note.txt
+  |-- test/
+  |   |-- action_controller_override_test.rb
+  |   |-- sessions_controller_test.rb
+  |   |-- sessions_helper_test.rb
+  |   |-- sha1_salted_encryptor_test.rb
+  |   |-- test_helper.rb
+  |   |-- user_auth_test.rb
+  |   `-- users_controller_test.rb
+  `-- uninstall.rb
+
+  16 directories, 33 files
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
