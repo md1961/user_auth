@@ -64,7 +64,7 @@ class TestTargetControllerTest < ActionController::TestCase
     UserAuthKuma::User.restore_new
 
     assert_redirected_to :controller => 'users', :action => 'index'
-    assert_equal(PARAMS_USER_MOCK, assigns(:user).params_user, "@user.user")
+    assert_equal(PARAMS_USER_MOCK, assigns(:user).params_user, "@user.params_user")
   end
 
   ID = 635
@@ -87,6 +87,17 @@ class TestTargetControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_template :edit
+  end
+
+  def test_update
+    UserAuthKuma::User.override_find(true)
+    get :update, {:id => ID, :user => PARAMS_USER_MOCK}
+    UserAuthKuma::User.restore_find
+
+    assert_redirected_to users_path
+    assert_equal(PARAMS_USER_MOCK, assigns(:user).params_user, "@user.params_user")
+    assert_equal(String, flash[:notice].class, "Class of flash[:notice]")
+    assert(flash[:notice].present?, "flash[:notice] should be present?")
   end
 
   def test_change_password
