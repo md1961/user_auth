@@ -190,6 +190,9 @@ UserAuth
       "helpers.label.session.password"
       "helpers.submit.login"
 
+    lib/app/controllers/user_auth_kuma/users_controller.rb
+      ???
+
     app/views/users/change_password.html.erb
       "helpers.page_title.users.change_password"
       "activerecord.model.user"

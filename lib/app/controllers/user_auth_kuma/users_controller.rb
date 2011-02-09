@@ -3,17 +3,33 @@ module UserAuthKuma
 # モデル User の処理を行うコントローラ
 class UsersController < ApplicationController
 
-  ATTRIBUTE_NAMES_TO_LIST = %w(id name is_writer is_administrator).freeze
+  ATTRIBUTE_NAMES_TO_LIST          = %w(id name).freeze
+  OPTIONAL_ATTRIBUTE_NAMES_TO_LIST = %w(is_writer is_administrator).freeze
 
   # ユーザの一覧を出力する
   def index
     @users = User.find(:all)
-    @attribute_names = ATTRIBUTE_NAMES_TO_LIST
+
+    @attribute_names = ATTRIBUTE_NAMES_TO_LIST.dup
+    OPTIONAL_ATTRIBUTE_NAMES_TO_LIST.each do |attr_name|
+      @attribute_names << attr_name if User.new.respond_to?(attr_name.to_sym)
+    end
   end
 
   # 新規作成画面を表示する
   def new
     @user = User.new
+  end
+
+  # インスタンスを生成する<br />
+  # <em>params[:user]</em> : インスタンスを生成するための属性を保持する Hash
+  def create
+    @user = User.new(params[:user])
+    if @user.save
+      redirect_to users_path, :notice => t("helpers.notice.user.created")
+    else
+      render :new
+    end
   end
 
   # パスワード変更画面を表示する
