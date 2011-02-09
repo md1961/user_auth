@@ -28,7 +28,7 @@ module UsersHelper
 
   def args_for_form_for(user)
     url, method = user.new_record? ? [users_path, :post] : [user_path, :put]
-    return {:url => url, :html => {:method => method}}
+    return {:as => :user, :url => url, :html => {:method => method}}
   end
 end
 
