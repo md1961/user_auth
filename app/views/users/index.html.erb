@@ -1,6 +1,10 @@
 
 <h1><%= t("helpers.page_title.users.index") %></h1>
 
+<p>
+  <%= link_to t("helpers.link.user.new"), new_user_path %>
+</p>
+
 <table id="table_users" class="table_base">
   <tr>
     <% @attribute_names.each do |attr_name| -%>
