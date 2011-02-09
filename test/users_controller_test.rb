@@ -47,26 +47,46 @@ class TestTargetControllerTest < ActionController::TestCase
     assert(user.new_record?, "@user should be a new record")
   end
 
-  PARAM_USER_MOCK = :param_user_mock
+  PARAMS_USER_MOCK = :params_user_mock
 
   def test_create_for_failed_save
-    User.override_new(false)
+    UserAuthKuma::User.override_new(false)
     get :create
+    UserAuthKuma::User.restore_new
 
     assert_response :success
     assert_template :new
-
-    User.restore_new
   end
 
   def test_create
-    User.override_new(true)
-    get :create, :user => PARAM_USER_MOCK
+    UserAuthKuma::User.override_new(true)
+    get :create, :user => PARAMS_USER_MOCK
+    UserAuthKuma::User.restore_new
 
     assert_redirected_to :controller => 'users', :action => 'index'
-    assert_equal(PARAM_USER_MOCK, assigns(:user).user, "@user.user")
+    assert_equal(PARAMS_USER_MOCK, assigns(:user).params_user, "@user.user")
+  end
 
-    User.restore_new
+  ID = 635
+
+  def test_edit
+    UserAuthKuma::User.override_find(false)
+    get :edit, {:id => ID, :user => PARAMS_USER_MOCK}
+    UserAuthKuma::User.restore_find
+
+    assert_response :success
+    assert_template :edit
+
+    assert_equal(ID, assigns(:user).id, "@user.id")
+  end
+
+  def test_update_for_failed_update_attributes
+    UserAuthKuma::User.override_find(false)
+    get :update, {:id => ID, :user => PARAMS_USER_MOCK}
+    UserAuthKuma::User.restore_find
+
+    assert_response :success
+    assert_template :edit
   end
 
   def test_change_password
@@ -126,6 +146,7 @@ class TestTargetControllerTest < ActionController::TestCase
     assert_redirected_to root_path
     assert_equal(User  , current_user.class  , "Class of @current_user")
     assert_equal(String, flash[:notice].class, "Class of flash[:notice]")
+    assert(flash[:notice].present?, "flash[:notice] should be present?")
   end
 
     def make_user_mock_to_be_updated_successfully
@@ -186,13 +207,45 @@ class User
 
   def self.new_overridden(params_user)
     user_mock = Object.new
-    user_mock.instance_variable_set(:@user, params_user)
+    user_mock.instance_variable_set(:@params_user, params_user)
     user_mock.instance_variable_set(:@retval_of_save, @@retval_of_save)
-    def user_mock.user
-      @user
+    def user_mock.params_user
+      @params_user
     end
     def user_mock.save
       @retval_of_save
+    end
+
+    return user_mock
+  end
+
+  def self.override_find(retval_of_update)
+    @@retval_of_update = retval_of_update
+    User.instance_eval do
+      alias :find_original :find
+      alias :find          :find_overridden
+    end
+  end
+
+  def self.restore_find
+    User.instance_eval do
+      alias :find :find_original
+    end
+  end
+
+  def self.find_overridden(id)
+    user_mock = Object.new
+    user_mock.instance_variable_set(:@id, id)
+    user_mock.instance_variable_set(:@retval_of_update, @@retval_of_update)
+    def user_mock.id
+      @id
+    end
+    def user_mock.params_user
+      @params_user
+    end
+    def user_mock.update_attributes(params_user)
+      @params_user = params_user
+      @retval_of_update
     end
 
     return user_mock
