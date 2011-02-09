@@ -14,17 +14,32 @@
   <% end -%>
 
   <div class="field">
-    <%= f.label t("helpers.label.user.name") %><br />
+    <%= f.label :name %><br />
     <%= f.text_field :name %>
   </div>
   <div class="field">
-    <%= f.label t("helpers.label.user.password") %><br />
+    <%= f.label :password %><br />
     <%= f.password_field :password %>
   </div>
   <div class="field">
-    <%= f.label t("helpers.label.user.password_confirmation") %><br />
+    <%= f.label :password_confirmation %><br />
     <%= f.password_field :password_confirmation %>
   </div>
+
+  <% if @user.respond_to?(:is_writer) -%>
+    <div class="field">
+      <%= f.check_box :is_writer %>
+      <%= f.label :is_writer %>
+    </div>
+  <% end -%>
+
+  <% if @user.respond_to?(:is_administrator) -%>
+    <div class="field">
+      <%= f.check_box :is_administrator %>
+      <%= f.label :is_administrator %>
+    </div>
+  <% end -%>
+
   <div class="actions">
     <%= f.submit %>
   </div>
