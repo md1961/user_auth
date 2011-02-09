@@ -26,9 +26,12 @@ class TestTargetControllerTest < ActionController::TestCase
       base_class_name = user.class.name.demodulize
       assert_equal('User', base_class_name, "Class of @users[#{index}]")
     end
-    assert_equal(UserAuthKuma::UsersController::ATTRIBUTE_NAMES_TO_LIST,
-                 assigns(:attribute_names),
-                 "@attribute_names")
+
+    attribute_names = assigns(:attribute_names)
+    assert_equal(Array, attribute_names.class, "Class of @attribute_names")
+    attribute_names.each_with_index do |attr_name, index|
+      assert_equal(String, attr_name.class, "Class of @attribute_names[#{index}]")
+    end
   end
 
   def test_new
