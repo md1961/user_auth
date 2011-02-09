@@ -32,6 +32,24 @@ class UsersController < ApplicationController
     end
   end
 
+  # 編集画面を表示する<br />
+  # <em>params[:id]</em> : 編集する User の id
+  def edit
+    @user = User.find(params[:id])
+  end
+
+  # インスタンスの属性を更新する<br />
+  # <em>params[:id]</em> : 更新する User の id<br />
+  # <em>params[:user]</em> : 更新後の属性を保持する Hash
+  def update
+    @user = User.find(params[:id])
+    if @user.update_attributes(params[:user])
+      redirect_to users_path, :notice => t("helpers.notice.user.updated")
+    else
+      render :edit
+    end
+  end
+
   # パスワード変更画面を表示する
   def change_password
     # just render

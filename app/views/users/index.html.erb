@@ -10,6 +10,8 @@
     <% @attribute_names.each do |attr_name| -%>
       <th><%= User.human_attribute_name(attr_name) %></th>
     <% end -%>
+
+    <th colspan="1" />
   </tr>
 
   <% @users.each do |user| -%>
@@ -19,6 +21,8 @@
           <%= attribute_value(user, attr_name) %>
         </td>
       <% end -%>
+
+      <td><%= link_to t("helpers.link.edit"), edit_user_path(user) %></td>
     </tr>
   <% end -%>
 </table>
