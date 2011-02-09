@@ -8,6 +8,7 @@ class TestTargetControllerTest < ActionController::TestCase
 
   def setup
     Rails.application.routes.draw do
+      resources :users
       root :to => 'test_target#change_password'
 
       match ':controller(/:action(/:id(.:format)))'
@@ -44,6 +45,28 @@ class TestTargetControllerTest < ActionController::TestCase
     base_class_name = user.class.name.demodulize
     assert_equal('User', base_class_name, "Class of @user")
     assert(user.new_record?, "@user should be a new record")
+  end
+
+  PARAM_USER_MOCK = :param_user_mock
+
+  def test_create_for_failed_save
+    User.override_new(false)
+    get :create
+
+    assert_response :success
+    assert_template :new
+
+    User.restore_new
+  end
+
+  def test_create
+    User.override_new(true)
+    get :create, :user => PARAM_USER_MOCK
+
+    assert_redirected_to :controller => 'users', :action => 'index'
+    assert_equal(PARAM_USER_MOCK, assigns(:user).user, "@user.user")
+
+    User.restore_new
   end
 
   def test_change_password
@@ -142,5 +165,38 @@ class TestTargetControllerTest < ActionController::TestCase
       return user_mock
     end
     private :make_user_mock_to_be_updated_unsuccessfully
+end
+
+
+module UserAuthKuma
+class User
+  def self.override_new(retval_of_save)
+    @@retval_of_save = retval_of_save
+    UserAuthKuma::User.instance_eval do
+      alias :new_original :new
+      alias :new          :new_overridden
+    end
+  end
+
+  def self.restore_new
+    UserAuthKuma::User.instance_eval do
+      alias :new :new_original
+    end
+  end
+
+  def self.new_overridden(params_user)
+    user_mock = Object.new
+    user_mock.instance_variable_set(:@user, params_user)
+    user_mock.instance_variable_set(:@retval_of_save, @@retval_of_save)
+    def user_mock.user
+      @user
+    end
+    def user_mock.save
+      @retval_of_save
+    end
+
+    return user_mock
+  end
+end
 end
 
