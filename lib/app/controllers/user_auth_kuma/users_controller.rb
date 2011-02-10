@@ -50,6 +50,18 @@ class UsersController < ApplicationController
     end
   end
 
+  # インスタンスを削除する<br />
+  # <em>params[:id]</em> : 削除する User の id
+  def destroy
+    user = User.find(params[:id])
+    if user.id == current_user.id
+      raise ArgumentError, "Cannot destroy currently logged-in user"
+    end
+    user.destroy
+
+    redirect_to users_path
+  end
+
   # パスワード変更画面を表示する
   def change_password
     # just render

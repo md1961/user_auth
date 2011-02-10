@@ -11,7 +11,7 @@
       <th><%= User.human_attribute_name(attr_name) %></th>
     <% end -%>
 
-    <th colspan="1" />
+    <th colspan="2" />
   </tr>
 
   <% @users.each do |user| -%>
@@ -22,7 +22,15 @@
         </td>
       <% end -%>
 
-      <td><%= link_to t("helpers.link.edit"), edit_user_path(user) %></td>
+      <td><%= link_to t("helpers.link.user.edit"), edit_user_path(user) %></td>
+      <td align="center">
+        <% if user.id == current_user.id -%>
+          <%= '-' %>
+        <% else -%>
+          <%= link_to t("helpers.link.user.destroy"), user_path(:id => user), :method => :delete,
+                                    :confirm => t("helpers.confirm.user.destroy") % {name: user.name} %>
+        <% end -%>
+      </td>
     </tr>
   <% end -%>
 </table>
