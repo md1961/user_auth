@@ -54,7 +54,7 @@ class UsersController < ApplicationController
   # <em>params[:id]</em> : 削除する User の id
   def destroy
     user = User.find(params[:id])
-    if user.id == current_user.id
+    if user.id == @current_user.id
       raise ArgumentError, "Cannot destroy currently logged-in user"
     end
     user.destroy

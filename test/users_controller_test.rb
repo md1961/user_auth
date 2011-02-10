@@ -100,6 +100,21 @@ class TestTargetControllerTest < ActionController::TestCase
     assert(flash[:notice].present?, "flash[:notice] should be present?")
   end
 
+  def test_destroy_current_user
+    user_mock = Object.new
+    user_mock.instance_variable_set(:@id, ID)
+    def user_mock.id
+      @id
+    end
+    @controller.instance_variable_set(:@current_user, user_mock)
+
+    UserAuthKuma::User.override_find
+    assert_raise(ArgumentError, "ArgumentError should have been raised") do
+      get :destroy, {:id => ID}
+    end
+    UserAuthKuma::User.restore_find
+  end
+
   def test_change_password
     get :change_password
 
@@ -230,7 +245,7 @@ class User
     return user_mock
   end
 
-  def self.override_find(retval_of_update)
+  def self.override_find(retval_of_update=false)
     @@retval_of_update = retval_of_update
     User.instance_eval do
       alias :find_original :find
@@ -248,6 +263,7 @@ class User
     user_mock = Object.new
     user_mock.instance_variable_set(:@id, id)
     user_mock.instance_variable_set(:@retval_of_update, @@retval_of_update)
+    user_mock.instance_variable_set(:@is_destroyed, false)
     def user_mock.id
       @id
     end
@@ -257,6 +273,12 @@ class User
     def user_mock.update_attributes(params_user)
       @params_user = params_user
       @retval_of_update
+    end
+    def user_mock.destroy
+      @is_destroyed = true
+    end
+    def user_mock.destroyed?
+      return @is_destroyed
     end
 
     return user_mock
