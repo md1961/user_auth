@@ -6,6 +6,12 @@
 
 ja:
   helpers:
+    submit:
+      session:
+        login: "ログイン"
+      user:
+        change: "変更"
+
     page_title:
       sessions:
         new: "ログインしてください"
@@ -32,6 +38,7 @@ ja:
       logout: "ログアウト"
       change_password: "パスワードの変更"
       user:
+        cancel: "キャンセル"
         index: "ユーザの一覧"
         new: "新規ユーザの作成"
         edit: "編集"
