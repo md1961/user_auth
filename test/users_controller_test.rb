@@ -115,6 +115,22 @@ class TestTargetControllerTest < ActionController::TestCase
     UserAuthKuma::User.restore_find
   end
 
+  def test_destroy
+    user_mock = Object.new
+    user_mock.instance_variable_set(:@id, ID - 1)
+    def user_mock.id
+      @id
+    end
+    @controller.instance_variable_set(:@current_user, user_mock)
+
+    UserAuthKuma::User.override_find
+    get :destroy, {:id => ID}
+    UserAuthKuma::User.restore_find
+
+    assert_redirected_to users_path
+    assert(User.get_user_mock.destroyed?, "User.@@user_mock should have been destroyed")
+  end
+
   def test_change_password
     get :change_password
 
@@ -260,28 +276,32 @@ class User
   end
 
   def self.find_overridden(id)
-    user_mock = Object.new
-    user_mock.instance_variable_set(:@id, id)
-    user_mock.instance_variable_set(:@retval_of_update, @@retval_of_update)
-    user_mock.instance_variable_set(:@is_destroyed, false)
-    def user_mock.id
+    @@user_mock = Object.new
+    @@user_mock.instance_variable_set(:@id, id)
+    @@user_mock.instance_variable_set(:@retval_of_update, @@retval_of_update)
+    @@user_mock.instance_variable_set(:@is_destroyed, false)
+    def @@user_mock.id
       @id
     end
-    def user_mock.params_user
+    def @@user_mock.params_user
       @params_user
     end
-    def user_mock.update_attributes(params_user)
+    def @@user_mock.update_attributes(params_user)
       @params_user = params_user
       @retval_of_update
     end
-    def user_mock.destroy
+    def @@user_mock.destroy
       @is_destroyed = true
     end
-    def user_mock.destroyed?
+    def @@user_mock.destroyed?
       return @is_destroyed
     end
 
-    return user_mock
+    return @@user_mock
+  end
+
+  def self.get_user_mock
+    return @@user_mock
   end
 end
 end
