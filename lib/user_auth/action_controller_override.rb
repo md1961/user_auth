@@ -59,7 +59,7 @@ class ActionController::Base
       if datetime_checked && datetime_checked < timeout.minutes.ago 
         reset_session
 
-        flash[:notice] = t(UserConstant::KEY_FOR_SESSION_TIMEOUT_NOTICE) % {timeout: timeout}
+        flash[:notice] = t("helpers.notice.session.timeout") % {timeout: timeout}
         logger.debug "ActionController::Base#check_timeout(): Session had been timed out"
       else
         session[KEY_FOR_DATETIME_TIMEOUT_CHECKED] = Time.now

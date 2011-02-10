@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       session[KEY_FOR_USER_ID] = user.id
       redirect_to root_path
     else
-      flash.now[:alert] = t(UserConstant::KEY_FOR_INVALID_LOGIN_NOTICE)
+      flash.now[:alert] = t("helpers.notice.session.invalid_login")
       render :new
     end
   end
@@ -17,6 +17,6 @@ class SessionsController < ApplicationController
   # Session のデータをクリアし、ログイン画面に戻る
   def destroy
     reset_session
-    redirect_to root_path, :notice => t(UserConstant::KEY_FOR_LOGGED_OUT_NOTICE)
+    redirect_to root_path, :notice => t("helpers.notice.session.logged_out")
   end
 end

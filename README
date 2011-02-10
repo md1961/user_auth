@@ -72,7 +72,7 @@ UserAuth
 
     resource :session, :only => [:new, :create, :destroy]
 
-    resources :users do
+    resources :users, :except => [:show] do
       member do
         get 'change_password'
         put 'update_password'
@@ -97,19 +97,27 @@ UserAuth
 
   DBテーブル users のカラムは下記を用意する。
 
-    カラム名         データ型  用途
-   ------------------------------------------------------------
-    name             string    ユーザ名
-    hashed_password  string    ハッシュ値に変換されたパスワード
+    カラム名          データ型  用途
+   -------------------------------------------------------------
+    name              string    ユーザ名
+    hashed_password   string    ハッシュ値に変換されたパスワード
 
-  書き込み権限、管理者権限を制御したいときは、引数を取らない下記のメソッドを
-  それぞれ用意する。
+  書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
+  用意する。
+
+    カラム名          データ型  用途
+   ------------------------------------------------------------
+    is_writer         boolean   書き込み権限を持つ場合は true
+    is_administrator  boolean   管理者権限を持つ場合は true
+
+  UserAuthKuma::User には既に下記のメソッドが定義されており、それぞれ
+  カラム is_writer、is_administrator が定義されていれば、対応するカラムの
+  値を返す。対応するカラムが定義されていない場合は常に false を返す。
 
     writer?()        : 書き込み権限があれば true、なければ false を返す
     administrator?() : 管理者権限があれば true、なければ false を返す
 
-  boolean 型のカラム is_writer, is_administrator を用意して、上記メソッドを
-  それぞれ対応する属性を返すように定義すればよい。
+  あるいは User に上記のメソッドをオーバーライドするメソッドを定義してもよい。
 
 5. UsersController を用意する
 
@@ -123,20 +131,10 @@ UserAuth
       before_filter :authenticate_as_administrator,
                                  :except => [:change_password, :update_password]
 
-  スーパークラスの UserAuthKuma::UsersController には下記のメソッドが実装されている。
-
-    change_password() : view 'change_password' をレンダリングする
-    update_password() : view 'change_password' からデータを受け取って
-                        current_user のパスワードを変更する
-
-  ...(NOT finished)...
-
-
 6. ユーザ定義の定数ファイルを用意する
 
-  下記の内容のファイルを config/initializers の下に適当なファイル名
-  （例えば 00_user_constant.rb など）で用意する。
-  数値自体は任意の値に設定する。
+  下記の内容のファイルを config/initializers の下に適当なファイル名（例えば
+  00_user_constant.rb など）で用意する。数値自体は任意の値に設定する。
 
     module UserConstant
       SESSION_TIMEOUT_IN_MIN = 30
@@ -145,17 +143,13 @@ UserAuth
       MAX_LENGTH_OF_NAME     = 50
       MIN_LENGTH_OF_PASSWORD =  4
       MAX_LENGTH_OF_PASSWORD = 20
-
-      KEY_FOR_LOGGED_OUT_NOTICE      = "helpers.notice.session.logged_out"
-      KEY_FOR_INVALID_LOGIN_NOTICE   = "helpers.notice.session.invalid_login"
-      KEY_FOR_SESSION_TIMEOUT_NOTICE = "helpers.notice.session.timeout"
     end
 
   最後の KEY_FOR_SESSION_TIMEOUT_NOTICE の値については後述する。
 
-7. app/views/layouts/application.html.erb にログアウト用リンクなどを追加する。
+7. app/views/layouts/application.html.erb にリンクなどを追加する
 
-  下記、あるいは同等なコードを適当な箇所に追加する（このファイルである必要はない）。
+  下記、あるいは同等なコードを適当な箇所に追加する。
 
     <% if logged_in? -%>
       <%= link_to t("helpers.link.logout"), logout_path %>
@@ -166,77 +160,31 @@ UserAuth
     <%= content_tag :p, notice, :class => "notice" if notice.present? %>
     <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
 
-8. sessions, users 用の VIEW を用意する
+8. 国際化対応の日本語翻訳ファイルを用意する
 
-  デフォルトの 'sessions#new', 'users#change_password' 
-  ...
-  を使いたくないときは app/views にそれぞれ用意する。
-  app/views 下の sessions や users に同名のファイルがあれば、そちらが
-  使われる。
-
-9. 国際化対応の翻訳ファイルを用意する
-
-  下記の箇所の表示文字列は国際化対応としてあるので、config/locales
-  ディレクトリに現在のロケール用の「翻訳ファイル」(translation file)
-  を用意する必要がある。
-
-    lib/app/controllers/sessions_controller.rb (SessionController)
-      "helpers.notice.session.logged_out"
-      "helpers.notice.session.invalid_login"
-
-    app/views/sessions/new.html.erb
-      "helpers.page_title.sessions.new"
-      "helpers.label.session.name"
-      "helpers.label.session.password"
-      "helpers.submit.login"
-
-    lib/app/controllers/user_auth_kuma/users_controller.rb
-      ???
-
-    app/views/users/change_password.html.erb
-      "helpers.page_title.users.change_password"
-      "activerecord.model.user"
-      "activerecord.errors.template.header.other"
-      "activerecord.errors.template.body"
-      "helpers.label.user.old_password" (f.label :old_password)
-      "helpers.label.user.new_password" (f.label :new_password)
-      "helpers.label.user.password_confirmation" (f.label :password_confirmation)
-      "helpers.submit.change"
-
-    app/views/users/index.html.erb
-      "helpers.page_title.users.index"
-      "helpers.link.user.new"
-
-    app/views/users/new.html.erb
-      "helpers.page_title.users.new"
-      "helpers.link.back"
-
-TODO: => add sample below
-
-    UserConstant::KEY_FOR_LOGGED_OUT_NOTICE の値として...
-      "helpers.notice.session.logged_out"
-    UserConstant::KEY_FOR_INVALID_LOGIN_NOTICE の値として...
-      "helpers.notice.session.invalid_login"
-      （文字列使用箇所は lib/app/controllers/sessions_controller.rb）
-
-    UserConstant::KEY_FOR_SESSION_TIMEOUT_NOTICE の値として...
-      "helpers.notice.session.timeout"
-      （文字列使用箇所は lib/user_auth/action_controller_override.rb）
-      （%{timeout} の部分には UserConstant で SESSION_TIMEOUT_IN_MIN に
-        指定した値が入る）
-
-    6. で app/views/layouts/application.html.erb に追加
-      "helpers.link.logout"
-
-  日本語を表示する場合は config/application.rb に以下を追加する。
+  config/application.rb に以下を追加する。
 
     config.i18n.default_locale = :ja
     config.i18n.load_path += Dir[Rails.root.join('vendor/plugins/user_auth/locales/**/*.{rb,yml}')]
 
-  一般用途のファイルは下記よりダウンロードできるので、使用する場合は
-  config/locales ディレクトリに配置する。
+  一般用途のファイルは下記よりダウンロードできるので、config/locales
+  ディレクトリに配置する。
 
     https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
+
+9. （必要であれば）sessions, users 用の VIEW を用意する
+
+  プラグインには下記のファイルが用意されているが、
+
+    app/views/sessions/new.html.erb
+    app/views/users/_form.html.erb
+    app/views/users/change_password.html.erb
+    app/views/users/edit.html.erb
+    app/views/users/index.html.erb
+    app/views/users/new.html.erb
+
+  を使いたくないときはプロジェクトの app/views にそれぞれ用意する。
+  同名のファイルがあれば、プロジェクトのものが使われる。
 
 
 使用方法
@@ -251,11 +199,11 @@ TODO: => add sample below
 
     ...
 
-この場合は、すべてのアクションに先立ってユーザ認証が必要になる。new, edit, create,
-update, destroy については、メソッド writer? が true を返すユーザのみがユーザ認証を
-経たのちに アクセス可能になり、さらに destroy はメソッド administrator? が true に
-設定されたユーザのみに 制限がかかる。メソッド writer? や administrator? がクラス
-User に存在しない場合は、各々アクセスはできない。
+上記のように設定した場合は、すべてのアクションに先立ってユーザ認証が必要になる。
+new, edit, create, update, destroy については、メソッド writer? が true を返す
+ユーザのみがユーザ認証を経たのちに アクセス可能になり、さらに destroy はメソッド
+administrator? が true を返すユーザのみに制限がかかる。メソッド writer? や
+administrator? がクラス User に存在しない場合は、各々アクセスはできない。
 
 認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
 しないまま 経過すると、自動的にログアウトされる。

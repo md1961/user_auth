@@ -1,8 +1,4 @@
-# Japanese translations for Ruby on Rails
-# by Akira Matsuda (ronnie@dio.jp)
-# AR error messages are basically taken from Ruby-GetText-Package. Thanks to Masao Mutoh.
-# contributors:
-#  - Tsutomu Kuroda (t-kuroda@oiax.jp)
+# Japanese translations for Ruby on Rails plugin 'user_auth'
 
 ja:
   helpers:
