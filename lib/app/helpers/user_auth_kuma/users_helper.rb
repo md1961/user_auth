@@ -1,6 +1,7 @@
 module UserAuthKuma
 
 module UsersHelper
+  include FormHelper
 
   YES_DISPLAY = 'V'
   NO_DISPLAY  = '-'
