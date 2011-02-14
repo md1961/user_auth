@@ -30,5 +30,15 @@ class UsersHelperTest < ActionView::TestCase
 
       return user_mock
     end
+
+  def test_attribute_align
+    [
+      %w(id    right),
+      %w(name  left),
+      %w(other center),
+    ].each do |attr_name, expected|
+      assert_equal(expected, attribute_align(attr_name), "attribute_align(#{attr_name.inspect})")
+    end
+  end
 end
 
