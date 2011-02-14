@@ -30,6 +30,7 @@ class UsersHelperTest < ActionView::TestCase
 
       return user_mock
     end
+    private :make_user_mock_to_test_attribute_value
 
   def test_attribute_align
     [
@@ -39,6 +40,42 @@ class UsersHelperTest < ActionView::TestCase
     ].each do |attr_name, expected|
       assert_equal(expected, attribute_align(attr_name), "attribute_align(#{attr_name.inspect})")
     end
+  end
+
+  USERS_PATH = "/users"
+  USER_PATH  = "/user"
+
+  def test_args_for_form_for
+    [
+      [true , USERS_PATH, :post],
+      [false, USER_PATH , :put ],
+    ].each do |is_new, url, method|
+      user_mock = Object.new
+      user_mock.instance_variable_set(:@is_new, is_new)
+      def user_mock.new_record?
+        @is_new
+      end
+
+      expected = {:as => :user, :url => url, :html => {:method => method}}
+      actual   = args_for_form_for(user_mock)
+      msg      = "args_for_form_for() for user with new_record? of #{is_new}"
+      assert_equal(expected, actual, msg)
+    end
+  end
+
+    def users_path
+      return USERS_PATH
+    end
+    def user_path
+      return USER_PATH
+    end
+    private :users_path, :user_path
+
+  def test_object_boolean_q
+    assert(true .boolean?, "true.boolean? should be true")
+    assert(false.boolean?, "false.boolean? should be true")
+    assert(! Object.new.boolean?, "Object.new.boolean? should be false")
+    assert(! "string"  .boolean?, "'string'.boolean? should be false")
   end
 end
 
