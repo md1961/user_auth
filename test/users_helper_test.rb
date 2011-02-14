@@ -4,11 +4,20 @@ class UsersHelperTest < ActionView::TestCase
   include UserAuthKuma::UsersHelper
 
   def test_attribute_value
-    user_mock = make_user_mock_to_test_attribute_value(:name, true)
-
     expected = UserAuthKuma::UsersHelper::YES_DISPLAY
-    actual   = attribute_value(user_mock, :name)
-    assert_equal(expected, actual, "for value of true")
+    user_mock = make_user_mock_to_test_attribute_value(:name, true)
+    actual = attribute_value(user_mock, :name)
+    assert_equal(expected, actual, "attribute_value() for value of true")
+
+    expected = UserAuthKuma::UsersHelper::NO_DISPLAY
+    user_mock = make_user_mock_to_test_attribute_value(:name, false)
+    actual = attribute_value(user_mock, :name)
+    assert_equal(expected, actual, "attribute_value() for value of false")
+
+    expected = :value
+    user_mock = make_user_mock_to_test_attribute_value(:name, expected)
+    actual = attribute_value(user_mock, :name)
+    assert_equal(expected, actual, "attribute_value() for value of false")
   end
 
     def make_user_mock_to_test_attribute_value(attr_name, attr_value)
