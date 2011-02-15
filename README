@@ -224,58 +224,57 @@ administrator? がクラス User に存在しない場合は、各々アクセ�
 
 インストールされるファイルは以下のとおり。
 
-  .
-  |-- MIT-LICENSE
-  |-- README
-  |-- Rakefile
-  |-- app/
-  |   `-- views/
-  |       |-- sessions/
-  |       |   `-- new.html.erb
-  |       |-- test_target/
-  |       |   |-- change_password.html.erb
-  |       |   |-- edit.html.erb
-  |       |   |-- index.html.erb
-  |       |   `-- new.html.erb
-  |       `-- users/
-  |           |-- _form.html.erb
-  |           |-- change_password.html.erb
-  |           |-- edit.html.erb
-  |           |-- index.html.erb
-  |           `-- new.html.erb
-  |-- init.rb
-  |-- install.rb
-  |-- lib/
-  |   |-- app/
-  |   |   |-- controllers/
-  |   |   |   |-- sessions_controller.rb
-  |   |   |   `-- user_auth_kuma/
-  |   |   |       `-- users_controller.rb
-  |   |   |-- helpers/
-  |   |   |   |-- sessions_helper.rb
-  |   |   |   `-- user_auth_kuma/
-  |   |   |       `-- users_helper.rb
-  |   |   `-- models/
-  |   |       |-- sha1_salted_encryptor.rb
-  |   |       `-- user_auth_kuma/
-  |   |           `-- user.rb
-  |   |-- user_auth/
-  |   |   `-- action_controller_override.rb
-  |   `-- user_auth.rb
-  |-- locales/
-  |   `-- ja.yml
-  |-- note.txt
-  |-- test/
-  |   |-- action_controller_override_test.rb
-  |   |-- sessions_controller_test.rb
-  |   |-- sessions_helper_test.rb
-  |   |-- sha1_salted_encryptor_test.rb
-  |   |-- test_helper.rb
-  |   |-- user_auth_test.rb
-  |   `-- users_controller_test.rb
-  `-- uninstall.rb
-
-  16 directories, 33 files
+|-- MIT-LICENSE
+|-- README
+|-- Rakefile
+|-- app
+|   `-- views
+|       |-- sessions
+|       |   `-- new.html.erb
+|       |-- system
+|       |   `-- _error_messages_for.html.erb
+|       `-- users
+|           |-- _form.html.erb
+|           |-- change_password.html.erb
+|           |-- edit.html.erb
+|           |-- index.html.erb
+|           `-- new.html.erb
+|-- init.rb
+|-- install.rb
+|-- lib
+|   |-- app
+|   |   |-- controllers
+|   |   |   |-- sessions_controller.rb
+|   |   |   `-- user_auth_kuma
+|   |   |       `-- users_controller.rb
+|   |   |-- helpers
+|   |   |   |-- sessions_helper.rb
+|   |   |   `-- user_auth_kuma
+|   |   |       |-- form_helper.rb
+|   |   |       `-- users_helper.rb
+|   |   `-- models
+|   |       |-- sha1_salted_encryptor.rb
+|   |       `-- user_auth_kuma
+|   |           `-- user.rb
+|   |-- user_auth
+|   |   `-- action_controller_override.rb
+|   `-- user_auth.rb
+|-- locales
+|   `-- ja.yml
+|-- note.txt
+|-- test
+|   |-- action_controller_override_test.rb
+|   |-- fixtures
+|   |   `-- users.yml
+|   |-- sessions_controller_test.rb
+|   |-- sessions_helper_test.rb
+|   |-- sha1_salted_encryptor_test.rb
+|   |-- test_helper.rb
+|   |-- user_auth_test.rb
+|   |-- user_test.rb
+|   |-- users_controller_test.rb
+|   `-- users_helper_test.rb
+`-- uninstall.rb
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
