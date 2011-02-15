@@ -176,7 +176,11 @@ UserAuth
 
     https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
 
-9. （必要であれば）sessions, users 用の VIEW を用意する
+9. スタイルシートを用意する
+
+  vendor/plugins/user_auth/stylesheets/user_auth.css をコピーして使う
+
+10. （必要であれば）sessions, users 用の VIEW を用意する
 
   プラグインには下記のファイルが用意されているが、
 
