@@ -1,0 +1,25 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# The password of each user is same as the name.
+
+normal:
+  id:               1
+  name:             normal
+  hashed_password:  $2$lKaznIiU$ed721192f573d99092119c7299f064ca98fa1a3e
+  is_writer:        false
+  is_administrator: false
+
+writer:
+  id:               2
+  name:             writer
+  hashed_password:  $2$1E3fF1Vu$6463ad6917805e9d2d181630e9d79d39b604ab7b
+  is_writer:        true
+  is_administrator: false
+
+admin:
+  id:               3
+  name:             admin
+  hashed_password:  $2$peOWNkOx$cecb44f3a10985808e0e9eb603f7f6bcbc66b99e
+  is_writer:        true
+  is_administrator: true
+
