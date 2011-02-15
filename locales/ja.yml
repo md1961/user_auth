@@ -57,6 +57,7 @@ ja:
     alert:
       user:
         old_password_not_match: "現在のパスワードが違います"
+        password_should_be_entered: "パスワードを入力してください"
 
   activerecord:
     model:
