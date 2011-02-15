@@ -7,6 +7,10 @@ UserAuth
 機能
 ====
 
+- ユーザ認証によりアクセス制限を行う。
+
+- パスワードは SHA-1 により暗号化されて DB に保存される。
+
 - before_filter :authenticate（あるいは :authenticate_as_writer、
   または :authenticate_as_administrator）の対象となるアクションに
   認証手続きなしに、あるいは権限不足でアクセスするとログイン画面
@@ -102,8 +106,8 @@ UserAuth
     name              string    ユーザ名
     hashed_password   string    ハッシュ値に変換されたパスワード
 
-  書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
-  用意する。
+4-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
+     用意する。
 
     カラム名          データ型  用途
    ------------------------------------------------------------
@@ -122,7 +126,7 @@ UserAuth
 5. UsersController を用意する
 
   下記のように UserAuthKuma::UsersController を継承する。
-  特に before_filter :authenticate (あるいは :authenticate_as_writer,
+  before_filter :authenticate (あるいは :authenticate_as_writer,
   :authenticate_as_administrator）の設定はセキュリティ上重要なので
   必ず漏れがないように注意する。
 
