@@ -34,7 +34,7 @@ class StreamEditor
       begin
         write_back(f_tmp)
       rescue
-        File.rename(@new_filename, @filename)
+        File.rename(@filename_orig, @filename)
         raise
       end
     ensure
@@ -57,8 +57,8 @@ class StreamEditor
     end
 
     def write_back(f_tmp)
-      @new_filename = @filename + ORIGINAL_EXTENSION
-      File.rename(@filename, @new_filename)
+      @filename_orig = filename_for_original
+      File.rename(@filename, @filename_orig)
 
       f_tmp.open
       File.open(@filename, 'w') do |f|
@@ -66,6 +66,18 @@ class StreamEditor
           f.print line
         end
       end
+    end
+
+    def filename_for_original
+      basename = @filename + ORIGINAL_EXTENSION
+      name = basename
+      suffix = 2
+      while File.exist?(name)
+        name = basename + suffix.to_s
+        suffix += 1
+      end
+
+      return name
     end
 end
 
