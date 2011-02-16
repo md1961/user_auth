@@ -2,7 +2,12 @@
 
 require 'tempfile'
 
-
+# Implement edit_line() in subclass
+# to receive the contents of the file line by line via argument line
+# and return a String or an Array of String edited,
+# or return nil, or an empty Array if deleting the line.
+# Call "edited = true" or ...
+# ...
 class StreamEditor
 
   TMP_DIR = '/tmp'
@@ -10,13 +15,14 @@ class StreamEditor
 
   def initialize(filename)
     @filename = filename
+    @is_edited = false
+    @h_edited_partial = Hash.new
+
     unless File.file?(@filename)
       raise ArgumentError, "Cannot find '#{TARGET_FILENAME}' in directory '#{dirname}'"
     end
   end
 
-  # Implement to return line(String) or lines(Array of String) after editing,
-  # or return nil, or an empty Array if deleting the line.
   def edit_line(line)
     raise NotImplementedError, "Must be overridden by a subclass"
   end
@@ -31,18 +37,52 @@ class StreamEditor
       end
       f_tmp.close
 
-      begin
-        write_back(f_tmp)
-      rescue
-        File.rename(@filename_orig, @filename)
-        raise
+      if edited?
+        begin
+          write_back(f_tmp)
+        rescue
+          File.rename(@filename_orig, @filename)
+          raise
+        end
       end
     ensure
       f_tmp.close(true)
     end
   end
 
+  protected
+
+  def initialize_edited_partial(*keys)
+    keys.each do |key|
+      @h_edited_partial[key.intern] = false
+    end
+  end
+
+  def edited=(bool)
+    check_boolean(bool)
+
+    @is_edited = bool
+  end
+
+  def edited_partial(key, bool)
+    check_boolean(bool)
+    valid_keys = @h_edited_partial.keys
+    msg = "Unknown key '#{key}' (Must be one of #{valid_keys.inspect})"
+    raise ArgumentError, msg unless valid_keys.include?(key.intern)
+
+    @h_edited_partial[key.intern] = bool
+  end
+
   private
+
+    def edited?
+      return @is_edited || edited_partial_all?
+    end
+
+    def edited_partial_all?
+      bools = @h_edited_partial.values
+      return ! bools.empty? && bools.all?
+    end
 
     def edit_each_line(f_in, f_out)
       f_in.each do |line|
@@ -79,5 +119,16 @@ class StreamEditor
 
       return name
     end
+
+    def check_boolean(value)
+      raise ArgumentError, "Argument must be a boolean" unless value.boolean?
+    end
+end
+
+
+class Object
+  def boolean?
+    return [TrueClass, FalseClass].include?(self.class)
+  end
 end
 
