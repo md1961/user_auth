@@ -6,8 +6,6 @@ require File.dirname(__FILE__) + '/stream_editor'
 class SessionStoreModifier < StreamEditor
 
   TARGET_FILENAME = 'config/initializers/session_store.rb'
-  TMP_DIR = '/tmp'
-  ORIGINAL_EXTENSION = '.original'
 
   def initialize(dirname)
     super(dirname + '/' + TARGET_FILENAME)
