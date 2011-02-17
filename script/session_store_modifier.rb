@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/stream_editor'
 
 class SessionStoreModifier < StreamEditor
 
-  TARGET_FILENAME = 'config/initializers/session_store.rb'
+  TARGET_FILENAME = "config/initializers/session_store.rb"
 
   def initialize(dirname)
     super(dirname + '/' + TARGET_FILENAME)
@@ -13,13 +13,14 @@ class SessionStoreModifier < StreamEditor
   end
 
   def modify
-    edit
+    return edit
   end
 
   private
 
     def edit
-      super
+      is_edited = super
+      return is_edited
     end
 
     RE_COOKIE_STORE  = /^\s*\w+::Application\.config\.session_store\s+:cookie_store/
@@ -40,11 +41,14 @@ end
 
 
 if __FILE__ == $0
+  target_filename = SessionStoreModifier::TARGET_FILENAME
+
   if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has 'config/initializers/session_store.rb'"
+    raise ArgumentError, "Specify directory which has '#{target_filename}'"
   end
 
   ssm = SessionStoreModifier.new(ARGV[0])
-  ssm.modify
+  is_modified = ssm.modify
+  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
 end
 

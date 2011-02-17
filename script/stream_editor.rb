@@ -5,7 +5,8 @@ require 'tempfile'
 # Implement edit_line() in subclass
 # to receive the contents of the file line by line via argument line
 # and return a String or an Array of String edited,
-# or return nil, or an empty Array if deleting the line.
+# or return an empty Array if deleting the line,
+# or return false or nil if aborting the whole editing.
 # Call set_edited(true), or set_edited_partial(key, true) for all the keys
 # which were given to initialize_edited_partial() to writer back the edited
 # result to the target file.
@@ -24,7 +25,7 @@ class StreamEditor
     @h_edited_partial = Hash.new
 
     unless File.file?(@filename)
-      raise ArgumentError, "Cannot find '#{TARGET_FILENAME}' in directory '#{dirname}'"
+      raise ArgumentError, "Cannot find '#{filename}'"
     end
   end
 
@@ -42,9 +43,11 @@ class StreamEditor
       end
       f_tmp.close
 
+      is_written = false
       if edited?
         begin
           write_back(f_tmp)
+          is_written = true
         rescue
           File.rename(@filename_orig, @filename)
           raise
@@ -53,6 +56,8 @@ class StreamEditor
     ensure
       f_tmp.close(true)
     end
+
+    return is_written
   end
 
   def initialize_edited_partial(*keys)
@@ -88,6 +93,10 @@ class StreamEditor
   def edit_each_line(f_in, f_out)
     f_in.each do |line|
       lines = edit_line(line)
+      unless lines
+        set_edited(false)
+        break
+      end
       unless lines.is_a?(Array)
         lines = lines.is_a?(String) ? [lines] : []
       end
