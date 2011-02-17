@@ -139,7 +139,7 @@ class TestTargetControllerTest < ActionController::TestCase
   end
 
   def test_update_password_for_wrong_old_password
-    user_mock = make_user_mock_not_to_be_authenticated
+    user_mock = make_user_mock_for_authentication(false)
     @controller.instance_variable_set(:@current_user, user_mock)
 
     get :update_password, :user => {}
@@ -152,7 +152,7 @@ class TestTargetControllerTest < ActionController::TestCase
     assert_equal(String       , current_user.errors.message.class, "Class of message of @current_user.erros")
   end
 
-    def make_user_mock_not_to_be_authenticated
+    def make_user_mock_for_authentication(is_to_be_authenticated)
       errors_mock = Object.new
       def errors_mock.add(column_name, message)
         @column_name = column_name
@@ -167,8 +167,9 @@ class TestTargetControllerTest < ActionController::TestCase
 
       user_mock = User.new
       user_mock.instance_variable_set(:@errors, errors_mock)
+      user_mock.instance_variable_set(:@is_to_be_authenticated, is_to_be_authenticated)
       def user_mock.authenticated?(old_password)
-        false
+        @is_to_be_authenticated
       end
       def user_mock.errors
         @errors
@@ -176,13 +177,27 @@ class TestTargetControllerTest < ActionController::TestCase
 
       return user_mock
     end
-    private :make_user_mock_not_to_be_authenticated
+    private :make_user_mock_for_authentication
+
+  def test_update_password_with_blank_password
+    user_mock = make_user_mock_for_authentication(true)
+    @controller.instance_variable_set(:@current_user, user_mock)
+
+    get :update_password, :user => {}
+    current_user = assigns(:current_user)
+
+    assert_response :success
+    assert_template :change_password
+    assert_equal(User     , current_user.class               , "Class of @current_user")
+    assert_equal(:password, current_user.errors.column_name  , "column_name of @current_user.erros")
+    assert_equal(String   , current_user.errors.message.class, "Class of message of @current_user.erros")
+  end
 
   def test_update_password_for_successful_update
     user_mock = make_user_mock_to_be_updated_successfully
     @controller.instance_variable_set(:@current_user, user_mock)
 
-    get :update_password, :user => {}
+    get :update_password, :user => {:password => "any_string"}
     current_user = assigns(:current_user)
 
     assert_redirected_to root_path
