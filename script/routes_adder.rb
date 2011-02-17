@@ -86,7 +86,6 @@ class RoutesAdder < StreamEditor
       
       key = clazz.name.intern
       return SearchingKeyword.new if @@h_times_of_insertion[key] >= MAX_TIMES_OF_INSERTION
-      @@h_times_of_insertion[key] += 1
       return clazz.new
     end
 
@@ -95,13 +94,25 @@ class RoutesAdder < StreamEditor
       if line =~ RE_COMMENT
         self.next_status = self.class.new
       else
-        inserting_lines = lines_to_insert
         self.next_status = SearchingKeyword.new
-        self.is_edited = true
+        key = self.class.name.intern
+        @@h_times_of_insertion[key] += 1
+        unless line =~ search_pattern(lines_to_insert)  # Not to insert same lines again
+          inserting_lines = lines_to_insert
+          self.is_edited = true
+        end
       end
 
       return inserting_lines + [line]
     end
+
+    private
+
+      def search_pattern(lines)
+        raise ArgumentError, "Argument lines must be an Array" unless lines.is_a?(Array)
+        pattern = lines[0].chomp.strip.gsub(/\s+/, '\s+').gsub(/\[/, '\[').gsub(/\]/, '\]')
+        return /#{pattern}/
+      end
   end
 
   class InsertingNamedRoute < InsertingRoute
@@ -139,8 +150,7 @@ class RoutesAdder < StreamEditor
   ]
 
   LINES_ROOT_ROUTE = [
-    "  # TODO: Replace '(controller)' and '(action)' with actual names\n",
-    "  root :to => \"(controller)#(action)\"\n",
+    "  root :to => \"controller_name#action_name\"\n",
   ]
 
 end

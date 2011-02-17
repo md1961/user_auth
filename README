@@ -83,7 +83,7 @@ UserAuth
       end
     end
 
-    root :to => "(controller)#(action)"
+    root :to => "controller_name#action_name"
 
   root_path はログイン成功後のリダイレクト先になるが、 このアクションが
 
