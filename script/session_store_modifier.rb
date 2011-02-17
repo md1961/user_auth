@@ -9,6 +9,7 @@ class SessionStoreModifier < StreamEditor
 
   def initialize(dirname)
     super(dirname + '/' + TARGET_FILENAME)
+    initialize_edited_partial(:cookie, :session)
   end
 
   def modify
@@ -28,8 +29,10 @@ class SessionStoreModifier < StreamEditor
     def edit_line(line)
       if line =~ RE_COOKIE_STORE
         line = '#' + line
+        set_edited_partial(:cookie, true)
       elsif line =~ RE_SESSION_STORE
         line = $1 + "\n"
+        set_edited_partial(:session, true)
       end
       return line
     end
