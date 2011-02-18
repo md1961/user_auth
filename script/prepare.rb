@@ -4,20 +4,19 @@ CURRENT_DIRNAME = File.dirname(__FILE__)
 
 require CURRENT_DIRNAME + '/session_store_modifier'
 require CURRENT_DIRNAME + '/application_controller_modifier'
+require CURRENT_DIRNAME + '/routes_adder'
 =begin
 config_application_modifier.rb
 prepare.rb
-routes_adder.rb
 =end
 
 
 class PrepareUserAuth
 
-  UP = '/..'
-
   MODIFIERS = [
     [SessionStoreModifier         , :modify],
     [ApplicationControllerModifier, :modify],
+    [RoutesAdder                  , :modify],
   ]
 
   def initialize
@@ -25,15 +24,17 @@ class PrepareUserAuth
     raise RuntimeError, "Cannot find Rails root directory" unless @rails_root
   end
 
+  INDENT = ' ' * 4
+
   def prepare
     MODIFIERS.each do |modifyingClass, action|
       begin
         modifier = modifyingClass.new(@rails_root)
         puts message_before_action(modifier)
         is_modified = modifier.send(action)
-        puts is_modified ? "  Done." : "  There is nothing to be done"
+        puts INDENT + (is_modified ? "Done." : "There is nothing to be done")
       rescue => e
-        puts "  Failed due to #{e.message}"
+        puts INDENT + "Failed due to #{e.message}"
       end
     end
   end
@@ -42,7 +43,7 @@ class PrepareUserAuth
 
     def message_before_action(modifier)
       filename = remove_dirname(modifier.target_filename, @rails_root)
-      return "#{modifier.class} to modify file '#{filename}' ..."
+      return "'#{filename}' is being modified by #{modifier.class} ..."
     end
 
     def remove_dirname(filename, dirname)
@@ -52,11 +53,13 @@ class PrepareUserAuth
       return abs_file.gsub(/\A#{abs_dir}/, '')
     end
 
+    DIR_UP = '/..'
+
     def search_rails_root(dirname_start)
       dirname = dirname_start
       while File.directory?(dirname)
         return dirname if rails_root?(dirname)
-        dirname += UP
+        dirname += DIR_UP
       end
 
       return nil
