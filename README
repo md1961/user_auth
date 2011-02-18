@@ -106,6 +106,10 @@ UserAuth
     name              string    ユーザ名
     hashed_password   string    ハッシュ値に変換されたパスワード
 
+  マイグレーションを使うなら、
+
+    rails generate model user name:string name:hashed_password
+
 4-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
      用意する。
 
