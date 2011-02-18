@@ -142,15 +142,17 @@ UserAuth
 6. ユーザ定義の定数ファイルを用意する
 
   下記の内容のファイルを config/initializers の下に適当なファイル名（例えば
-  00_user_constant.rb など）で用意する。数値自体は任意の値に設定する。
+  00_user_auth_kuma_constant.rb など）で用意する。数値自体は任意の値に設定する。
 
-    module UserConstant
-      SESSION_TIMEOUT_IN_MIN = 30
+    module UserAuthKuma
+      module Constant
+        SESSION_TIMEOUT_IN_MIN =  5
 
-      MIN_LENGTH_OF_NAME     =  5
-      MAX_LENGTH_OF_NAME     = 50
-      MIN_LENGTH_OF_PASSWORD =  4
-      MAX_LENGTH_OF_PASSWORD = 20
+        MIN_LENGTH_OF_NAME     =  5
+        MAX_LENGTH_OF_NAME     = 50
+        MIN_LENGTH_OF_PASSWORD =  4
+        MAX_LENGTH_OF_PASSWORD = 20
+      end
     end
 
   最後の KEY_FOR_SESSION_TIMEOUT_NOTICE の値については後述する。

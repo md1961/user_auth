@@ -180,7 +180,7 @@ class TestsControllerTest < ActionController::TestCase
 
   KEY_FOR_USER_ID                  = TestsController::KEY_FOR_USER_ID
   KEY_FOR_DATETIME_TIMEOUT_CHECKED = TestsController::KEY_FOR_DATETIME_TIMEOUT_CHECKED
-  SESSION_TIMEOUT_IN_MIN           = UserConstant::SESSION_TIMEOUT_IN_MIN
+  SESSION_TIMEOUT_IN_MIN           = UserAuthKuma::Constant::SESSION_TIMEOUT_IN_MIN
 
   NOW      = Time.utc(2011, 2, 2, 0, 0, 0)  # 2011-2-2 00:00:00
   NOW_MOCK = :time_test

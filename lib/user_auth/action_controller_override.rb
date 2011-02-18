@@ -54,7 +54,7 @@ class ActionController::Base
 
     # セッションタイムアウトを起こしていないかチェックする
     def check_timeout
-      timeout = UserConstant::SESSION_TIMEOUT_IN_MIN
+      timeout = UserAuthKuma::Constant::SESSION_TIMEOUT_IN_MIN
       datetime_checked = session[KEY_FOR_DATETIME_TIMEOUT_CHECKED]
       if datetime_checked && datetime_checked < timeout.minutes.ago 
         reset_session

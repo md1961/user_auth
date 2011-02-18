@@ -6,10 +6,10 @@ class User < ActiveRecord::Base
 
   attr_accessor :password, :old_password
 
-  MIN_LENGTH_OF_NAME     = UserConstant::MIN_LENGTH_OF_NAME
-  MAX_LENGTH_OF_NAME     = UserConstant::MAX_LENGTH_OF_NAME
-  MIN_LENGTH_OF_PASSWORD = UserConstant::MIN_LENGTH_OF_PASSWORD
-  MAX_LENGTH_OF_PASSWORD = UserConstant::MAX_LENGTH_OF_PASSWORD
+  MIN_LENGTH_OF_NAME     = UserAuthKuma::Constant::MIN_LENGTH_OF_NAME
+  MAX_LENGTH_OF_NAME     = UserAuthKuma::Constant::MAX_LENGTH_OF_NAME
+  MIN_LENGTH_OF_PASSWORD = UserAuthKuma::Constant::MIN_LENGTH_OF_PASSWORD
+  MAX_LENGTH_OF_PASSWORD = UserAuthKuma::Constant::MAX_LENGTH_OF_PASSWORD
 
   validates :name    , :presence     => true,
                        :uniqueness   => true,
