@@ -20,11 +20,21 @@ class PrepareUserAuth
   ]
 
   def initialize
-    rails_root = search_rails_root(CURRENT_DIRNAME)
-    raise RuntimeError, "Cannot find Rails root directory" unless rails_root
+    @rails_root = search_rails_root(CURRENT_DIRNAME)
+    raise RuntimeError, "Cannot find Rails root directory" unless @rails_root
   end
 
   def prepare
+    MODIFIERS.each do |modifyingClass, action|
+      begin
+        modifier = modifyingClass.new(@rails_root)
+        puts "#{modifyingClass} to modify file '#{File.expand_path(modifier.target_filename)}' ..."
+        is_modified = modifier.send(action)
+        puts is_modified ? "  Done." : "  The file was NOT modified"
+      rescue => e
+        puts "  Failed due to #{e.message}"
+      end
+    end
   end
 
   private
@@ -54,5 +64,6 @@ end
 
 if __FILE__ == $0
   pua = PrepareUserAuth.new
+  pua.prepare
 end
 

@@ -17,8 +17,6 @@ class StreamEditor
   TMP_DIR = '/tmp'
   ORIGINAL_EXTENSION = '.original'
 
-  private
-
   def initialize(filename)
     @filename = filename
     @is_edited = false
@@ -28,6 +26,12 @@ class StreamEditor
       raise ArgumentError, "Cannot find '#{filename}'"
     end
   end
+
+  def target_filename
+    return @filename
+  end
+
+  private
 
   def edit_line(line)
     raise NotImplementedError, "Must be overridden by a subclass"
