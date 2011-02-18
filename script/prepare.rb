@@ -3,8 +3,8 @@
 CURRENT_DIRNAME = File.dirname(__FILE__)
 
 require CURRENT_DIRNAME + '/session_store_modifier'
+require CURRENT_DIRNAME + '/application_controller_modifier'
 =begin
-application_controller_modifier.rb
 config_application_modifier.rb
 prepare.rb
 routes_adder.rb
@@ -16,7 +16,8 @@ class PrepareUserAuth
   UP = '/..'
 
   MODIFIERS = [
-    [SessionStoreModifier, :modify],
+    [SessionStoreModifier         , :modify],
+    [ApplicationControllerModifier, :modify],
   ]
 
   def initialize
@@ -28,9 +29,9 @@ class PrepareUserAuth
     MODIFIERS.each do |modifyingClass, action|
       begin
         modifier = modifyingClass.new(@rails_root)
-        puts "#{modifyingClass} to modify file '#{File.expand_path(modifier.target_filename)}' ..."
+        puts message_before_action(modifier)
         is_modified = modifier.send(action)
-        puts is_modified ? "  Done." : "  The file was NOT modified"
+        puts is_modified ? "  Done." : "  There is nothing to be done"
       rescue => e
         puts "  Failed due to #{e.message}"
       end
@@ -38,6 +39,18 @@ class PrepareUserAuth
   end
 
   private
+
+    def message_before_action(modifier)
+      filename = remove_dirname(modifier.target_filename, @rails_root)
+      return "#{modifier.class} to modify file '#{filename}' ..."
+    end
+
+    def remove_dirname(filename, dirname)
+      abs_file = File.expand_path(filename)
+      abs_dir  = File.expand_path( dirname)
+      abs_dir  = abs_dir + (abs_dir[-1] == '/' ? '' : '/')
+      return abs_file.gsub(/\A#{abs_dir}/, '')
+    end
 
     def search_rails_root(dirname_start)
       dirname = dirname_start
