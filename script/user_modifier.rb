@@ -7,20 +7,33 @@ class UserModifier < StreamEditor
   attr_reader :message
 
   TARGET_FILENAME = "app/models/user.rb"
+  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/templates/user.rb"
 
   def initialize(dirname)
+    @no_target = false
     begin
       super(dirname + '/' + TARGET_FILENAME)
     rescue StreamEditor::FileNotFoundError => e
-      raise
+      @no_target = true
     end
     @message = "Nothing done yet"
   end
 
   def modify
-    is_edited = edit
-    @message = "'#{target_filename}' was #{is_edited ? '' : 'NOT '}modified"
-    return is_edited
+    if @no_target
+      is_modified = true
+      begin
+        FileUtils.cp(TEMPLATE_FILENAME, target_filename)
+        @message = "'#{target_filename}' was creted"
+      rescue => e
+        is_modified = false
+        @message = e.message
+      end
+    else
+      is_modified = edit
+      @message = "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+    end
+    return is_modified
   end
 
   private
