@@ -4,15 +4,23 @@ require File.dirname(__FILE__) + '/stream_editor'
 
 
 class UserModifier < StreamEditor
+  attr_reader :message
 
   TARGET_FILENAME = "app/models/user.rb"
 
   def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
+    begin
+      super(dirname + '/' + TARGET_FILENAME)
+    rescue StreamEditor::FileNotFoundError => e
+      raise
+    end
+    @message = "Nothing done yet"
   end
 
   def modify
-    return edit
+    is_edited = edit
+    @message = "'#{target_filename}' was #{is_edited ? '' : 'NOT '}modified"
+    return is_edited
   end
 
   private
@@ -38,14 +46,12 @@ end
 
 
 if __FILE__ == $0
-  target_filename = UserModifier::TARGET_FILENAME
-
   if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{target_filename}'"
+    raise ArgumentError, "Specify directory which has '#{UserModifier::TARGET_FILENAME}'"
   end
 
   um = UserModifier.new(ARGV[0])
-  is_modified = um.modify
-  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+  um.modify
+  puts um.message
 end
 

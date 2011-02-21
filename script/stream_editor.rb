@@ -13,6 +13,7 @@ require 'tempfile'
 # The original contents of the target file will be saved to a file with
 # filename of "#{target_filename}#{ORIGINAL_EXTENSION}".
 class StreamEditor
+  class FileNotFoundError < StandardError; end
 
   TMP_DIR = '/tmp'
   ORIGINAL_EXTENSION = '.original'
@@ -23,7 +24,7 @@ class StreamEditor
     @h_edited_partial = Hash.new
 
     unless File.file?(@filename)
-      raise ArgumentError, "Cannot find '#{filename}'"
+      raise FileNotFoundError, "Cannot find '#{filename}'"
     end
   end
 
