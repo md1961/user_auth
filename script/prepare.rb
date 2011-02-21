@@ -9,7 +9,6 @@ require CURRENT_DIRNAME + '/user_modifier'
 require CURRENT_DIRNAME + '/users_controller_modifier'
 =begin
 config_application_modifier.rb
-prepare.rb
 =end
 
 
