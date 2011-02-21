@@ -140,7 +140,7 @@ class RoutesAdder < StreamEditor
 
   LINES_RESOURCE_ROUTE = [
     "  resource :session, :only => [:new, :create, :destroy]\n",
-    "  \n",
+    "\n",
     "  resources :users, :except => [:show] do\n",
     "    member do\n",
     "      get 'change_password'\n",
