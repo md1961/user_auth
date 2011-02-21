@@ -1,47 +1,22 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/modifier_or_file_creator'
 
 
-class UserModifier < StreamEditor
-  attr_reader :message
-
+class UserModifier < ModifierOrFileCreator
   TARGET_FILENAME = "app/models/user.rb"
   TEMPLATE_FILENAME = File.dirname(__FILE__) + "/templates/user.rb"
 
   def initialize(dirname)
-    @no_target = false
-    begin
-      super(dirname + '/' + TARGET_FILENAME)
-    rescue StreamEditor::FileNotFoundError => e
-      @no_target = true
-    end
-    @message = "Nothing done yet"
+    target_filename = dirname + '/' + TARGET_FILENAME
+    super(target_filename, TEMPLATE_FILENAME)
   end
 
   def modify
-    if @no_target
-      is_modified = true
-      begin
-        FileUtils.cp(TEMPLATE_FILENAME, target_filename)
-        @message = "'#{target_filename}' was creted"
-      rescue => e
-        is_modified = false
-        @message = e.message
-      end
-    else
-      is_modified = edit
-      @message = "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
-    end
-    return is_modified
+    return super
   end
 
   private
-
-    def edit
-      is_edited = super
-      return is_edited
-    end
 
     RE_TARGET = /^(\s*)class\s+User\s+<\s+ActiveRecord::Base(.*)$/
     STATEMENT_TO_INSERT = "class User < UserAuthKuma::User"
