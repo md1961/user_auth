@@ -5,6 +5,7 @@ CURRENT_DIRNAME = File.dirname(__FILE__)
 require CURRENT_DIRNAME + '/session_store_modifier'
 require CURRENT_DIRNAME + '/application_controller_modifier'
 require CURRENT_DIRNAME + '/routes_adder'
+require CURRENT_DIRNAME + '/user_modifier'
 =begin
 config_application_modifier.rb
 prepare.rb
@@ -17,6 +18,7 @@ class PrepareUserAuth
     [SessionStoreModifier         , :modify],
     [ApplicationControllerModifier, :modify],
     [RoutesAdder                  , :modify],
+    [UserModifier                 , :modify],
   ]
 
   def initialize
