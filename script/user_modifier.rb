@@ -5,11 +5,10 @@ require File.dirname(__FILE__) + '/modifier_or_file_creator'
 
 class UserModifier < ModifierOrFileCreator
   TARGET_FILENAME = "app/models/user.rb"
-  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/templates/user.rb"
 
   def initialize(dirname)
     target_filename = dirname + '/' + TARGET_FILENAME
-    super(target_filename, TEMPLATE_FILENAME)
+    super(target_filename, TEMPLATE_FILE_CONTENTS)
   end
 
   def modify
@@ -19,12 +18,14 @@ class UserModifier < ModifierOrFileCreator
   private
 
     RE_TARGET = /^(\s*)class\s+User\s+<\s+ActiveRecord::Base(.*)$/
-    STATEMENT_TO_INSERT = "class User < UserAuthKuma::User"
+    STATEMENT_TO_REPLACE_WITH = "class User < UserAuthKuma::User"
+
+    TEMPLATE_FILE_CONTENTS = STATEMENT_TO_REPLACE_WITH + "\nend\n"
 
     # Returns a String, or Array of String's to print
     def edit_line(line)
       if line =~ RE_TARGET
-        line = $1 + STATEMENT_TO_INSERT + $2 + "\n"
+        line = $1 + STATEMENT_TO_REPLACE_WITH + $2 + "\n"
         set_edited(true)
       end
 

@@ -6,14 +6,17 @@ require File.dirname(__FILE__) + '/stream_editor'
 class ModifierOrFileCreator < StreamEditor
   attr_reader :message
 
-  def initialize(target_filename, template_filename)
-    @template_filename = template_filename
+  def initialize(target_filename, template_file_contents)
+    @template_file_contents = template_file_contents
+    @template_file_contents = [@template_file_contents] unless @template_file_contents.is_a?(Array)
+
     @no_target = false
     begin
       super(target_filename)
     rescue StreamEditor::FileNotFoundError => e
       @no_target = true
     end
+
     @message = "Nothing done yet"
   end
 
@@ -23,7 +26,11 @@ class ModifierOrFileCreator < StreamEditor
       if @no_target
         is_modified = true
         begin
-          FileUtils.cp(@template_filename, target_filename)
+          File.open(target_filename, 'w') do |f|
+            @template_file_contents.each do |line|
+              f.puts line.chomp
+            end
+          end
           @message = "'#{target_filename}' was creted"
         rescue => e
           is_modified = false
