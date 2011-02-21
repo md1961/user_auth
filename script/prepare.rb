@@ -7,6 +7,7 @@ require CURRENT_DIRNAME + '/application_controller_modifier'
 require CURRENT_DIRNAME + '/routes_adder'
 require CURRENT_DIRNAME + '/user_modifier'
 require CURRENT_DIRNAME + '/users_controller_modifier'
+require CURRENT_DIRNAME + '/layout_template_modifier'
 =begin
 config_application_modifier.rb
 =end
@@ -20,6 +21,7 @@ class PrepareUserAuth
     [RoutesAdder                  , :modify],
     [UserModifier                 , :modify],
     [UsersControllerModifier      , :modify],
+    [LayoutTemplateModifier       , :modify],
   ]
 
   def initialize
