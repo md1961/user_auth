@@ -6,9 +6,10 @@ require File.dirname(__FILE__) + '/stream_editor'
 class ModifierOrFileCreator < StreamEditor
   attr_reader :message
 
-  def initialize(target_filename, template_file_contents)
+  def initialize(target_filename, template_file_contents, no_modify=false)
     @template_file_contents = template_file_contents
     @template_file_contents = [@template_file_contents] unless @template_file_contents.is_a?(Array)
+    @no_modify = no_modify
 
     @no_target = false
     begin
@@ -36,6 +37,9 @@ class ModifierOrFileCreator < StreamEditor
           is_modified = false
           @message = e.message
         end
+      elsif @no_modify
+        is_modified = false
+        @message = "Nothing done because '#{target_filename}' already exists"
       else
         is_modified = edit
         @message = "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
