@@ -1,14 +1,14 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/file_modifier'
 
 
-class LayoutTemplateModifier < StreamEditor
+class LayoutTemplateModifier < FileModifier
 
   TARGET_FILENAME = "app/views/layouts/application.html.erb"
 
-  def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
+  def initialize(argv)
+    super(argv)
 
     @is_searching = true
 
@@ -17,15 +17,10 @@ class LayoutTemplateModifier < StreamEditor
     @alert_found  = false
   end
 
-  def modify
-    return edit
-  end
-
   private
 
-    def edit
-      is_edited = super
-      return is_edited
+    def target_filename
+      return TARGET_FILENAME
     end
 
     RE_YIELD = /^\s*<%=\s+yield\s+%>/
@@ -86,14 +81,8 @@ end
 
 
 if __FILE__ == $0
-  target_filename = LayoutTemplateModifier::TARGET_FILENAME
-
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{target_filename}'"
-  end
-
-  cam = LayoutTemplateModifier.new(ARGV[0])
-  is_modified = cam.modify
-  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+  ltm = LayoutTemplateModifier.new(ARGV)
+  ltm.modify
+  puts ltm.message
 end
 
