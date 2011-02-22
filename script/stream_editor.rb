@@ -18,8 +18,10 @@ class StreamEditor
   TMP_DIR = '/tmp'
   ORIGINAL_EXTENSION = '.original'
 
-  def initialize(filename)
+  def initialize(filename, creates_backup=true)
     @filename = filename
+    @creates_backup = creates_backup
+
     @is_edited = false
     @h_edited_partial = Hash.new
 
@@ -121,6 +123,8 @@ class StreamEditor
         f.print line
       end
     end
+
+    File.delete(@filename_orig) unless @creates_backup
   end
 
   def filename_for_original
