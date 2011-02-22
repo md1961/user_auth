@@ -1,24 +1,31 @@
 #! /bin/env ruby
 
 require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/command_line_argument_parser'
 
 
 class ModifierOrFileCreator < StreamEditor
+  include CommandLineArgumentParser
+
   attr_reader :message
 
-  def initialize(target_filename, template_file_contents, no_modify=false)
-    @template_file_contents = template_file_contents
-    @template_file_contents = [@template_file_contents] unless @template_file_contents.is_a?(Array)
+  def initialize(argv, no_modify=false)
+    dirname, creates_backup = parse_argv(argv)
     @no_modify = no_modify
 
     @no_target = false
     begin
-      super(target_filename)
+      super(dirname + '/' + target_filename, creates_backup)
     rescue StreamEditor::FileNotFoundError => e
       @no_target = true
     end
 
     @message = "Nothing done yet"
+  end
+
+  # Return a relative path to a directory to be given via argument argv of initialize()
+  def target_filename
+    raise NotImplementedError, "Must be overridden by a subclass"
   end
 
   private
@@ -28,7 +35,7 @@ class ModifierOrFileCreator < StreamEditor
         is_modified = true
         begin
           File.open(target_filename, 'w') do |f|
-            @template_file_contents.each do |line|
+            template_file_contents.each do |line|
               f.puts line.chomp
             end
           end
