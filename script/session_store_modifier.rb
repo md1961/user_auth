@@ -7,8 +7,8 @@ class SessionStoreModifier < StreamEditor
 
   TARGET_FILENAME = "config/initializers/session_store.rb"
 
-  def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
+  def initialize(dirname, creates_backup=true)
+    super(dirname + '/' + TARGET_FILENAME, creates_backup)
     initialize_edited_partial(:cookie, :session)
   end
 
@@ -43,11 +43,18 @@ end
 if __FILE__ == $0
   target_filename = SessionStoreModifier::TARGET_FILENAME
 
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
+  creates_backup = true
+  if ARGV[0] == '--nobackup'
+    creates_backup = false
+    ARGV.shift
+  end
+
+  filename = ARGV.shift
+  if ARGV.size > 0 || ! File.directory?(filename)
     raise ArgumentError, "Specify directory which has '#{target_filename}'"
   end
 
-  ssm = SessionStoreModifier.new(ARGV[0])
+  ssm = SessionStoreModifier.new(filename, creates_backup)
   is_modified = ssm.modify
   puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
 end
