@@ -38,7 +38,7 @@ end
 
 if __FILE__ == $0
   ssm = SessionStoreModifier.new(ARGV)
-  is_modified = ssm.modify
+  ssm.modify
   puts ssm.message
 end
 

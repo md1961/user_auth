@@ -1,27 +1,22 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/file_modifier'
 
 require 'digest/sha1'
 
 
-class ApplicationControllerModifier < StreamEditor
+class ApplicationControllerModifier < FileModifier
 
   TARGET_FILENAME = "app/controllers/application_controller.rb"
 
-  def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
-  end
-
-  def modify
-    return edit
+  def initialize(argv)
+    super(argv)
   end
 
   private
 
-    def edit
-      is_edited = super
-      return is_edited
+    def target_filename
+      return TARGET_FILENAME
     end
 
     RE_TARGET = /^(\s*protect_from_forgery)\s*(?:#.*)?$/
@@ -50,14 +45,8 @@ end
 
 
 if __FILE__ == $0
-  target_filename = ApplicationControllerModifier::TARGET_FILENAME
-
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{target_filename}'"
-  end
-
-  acm = ApplicationControllerModifier.new(ARGV[0])
-  is_modified = acm.modify
-  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+  acm = ApplicationControllerModifier.new(ARGV)
+  acm.modify
+  puts acm.message
 end
 
