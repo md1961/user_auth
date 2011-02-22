@@ -23,6 +23,8 @@ class ConfigApplicationModifier < FileModifier
     RE_LOCALE  = /^\s*#.*locale/
     RE_COMMENT = /^\s*#/
 
+    #TODO: Do something to default_locale setting already there.
+
     # Returns a String, or Array of String's to print
     def edit_line(line)
       inserting_lines = Array.new
