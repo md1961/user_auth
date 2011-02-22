@@ -4,11 +4,11 @@ require File.dirname(__FILE__) + '/modifier_or_file_creator'
 
 
 class UsersControllerModifier < ModifierOrFileCreator
+
   TARGET_FILENAME = "app/controllers/users_controller.rb"
 
-  def initialize(dirname)
-    target_filename = dirname + '/' + TARGET_FILENAME
-    super(target_filename, TEMPLATE_FILE_CONTENTS)
+  def initialize(argv)
+    super(argv)
   end
 
   def modify
@@ -16,6 +16,14 @@ class UsersControllerModifier < ModifierOrFileCreator
   end
 
   private
+
+    def target_filename
+      return TARGET_FILENAME
+    end
+
+    def template_file_contents
+      return TEMPLATE_FILE_CONTENTS
+    end
 
     RE_TARGET = /^(\s*)class\s+UsersController\s+<\s+ApplicationController(.*)$/
     STATEMENT_TO_REPLACE_WITH = "class UsersController < UserAuthKuma::UsersController"
@@ -43,12 +51,8 @@ end
 
 
 if __FILE__ == $0
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{UsersControllerModifier::TARGET_FILENAME}'"
-  end
-
-  um = UsersControllerModifier.new(ARGV[0])
-  um.modify
-  puts um.message
+  ucm = UsersControllerModifier.new(ARGV)
+  ucm.modify
+  puts ucm.message
 end
 
