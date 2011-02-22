@@ -11,6 +11,8 @@ require CURRENT_DIRNAME + '/constant_creator'
 require CURRENT_DIRNAME + '/layout_template_modifier'
 require CURRENT_DIRNAME + '/config_application_modifier'
 
+require CURRENT_DIRNAME + '/command_line_argument_parser'
+
 
 class PrepareUserAuth
 
@@ -25,9 +27,16 @@ class PrepareUserAuth
     [ConfigApplicationModifier    , :modify],
   ]
 
+  OPTIONS_NOBACKUP = CommandLineArgumentParser::OPTIONS_NOBACKUP
+
   def initialize(argv)
+    if argv.size > 1 || (argv.size == 1 && ! OPTIONS_NOBACKUP.include?(argv[0]))
+      exit_with_message("Unknown options '#{argv.join(' ')}'.  Only take [#{OPTIONS_NOBACKUP.join('|')}]")
+    end
+    @argv = argv
+
     @rails_root = search_rails_root(CURRENT_DIRNAME)
-    raise RuntimeError, "Cannot find Rails root directory" unless @rails_root
+    exit_with_message("Cannot find Rails root directory") unless @rails_root
   end
 
   INDENT = ' ' * 4
@@ -35,8 +44,7 @@ class PrepareUserAuth
   def prepare
     MODIFIERS.each do |modifyingClass, action|
       begin
-        argv = Array.new
-        argv << @rails_root
+        argv = @argv + [@rails_root]
         modifier = modifyingClass.new(argv)
         puts message_before_action(modifier)
         is_modified = modifier.send(action)
@@ -82,6 +90,11 @@ class PrepareUserAuth
       end
 
       return true
+    end
+
+    def exit_with_message(message)
+      $stderr.puts message
+      exit
     end
 end
 

@@ -2,9 +2,11 @@ module CommandLineArgumentParser
 
   USAGE = "Usage: #{$0} [-n|--nobackup] dir"
 
+  OPTIONS_NOBACKUP = %w(-n --nobackup)
+
   def parse_argv(argv)
     creates_backup = true
-    if %w(-n --nobackup).include?(argv[0])
+    if OPTIONS_NOBACKUP.include?(argv[0])
       creates_backup = false
       argv.shift
     end
