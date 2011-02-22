@@ -48,52 +48,7 @@ UserAuth
 
   同様の手順で既に DB テーブルを作成済みの場合は、そのまま使える。
 
-2. session データを DB に保存するための設定をする
-
-  config/initializers/session_store.rb を編集し、
-
-    {アプリ名}::Application.config.session_store :cookie_store, :key => ...
-
-  の一文をコメントアウトして、
- 
-    {アプリ名}::Application.config.session_store :active_record_store
-
-  の一文のコメント開始文字 # を削除して有効にする。
-
-  さらに ApplicationController の protect_from_forgery 文から、下記のように
-  コメント開始文字 # を削除して :secret => 以下を有効にし、:secret の値に
-  外部からわからないような秘密の文字列を設定する。
-
-    protect_from_forgery :secret => '47d9ded4cc750a7582fe6bc408f7b80a'
-                                     # この文字列をそのまま使わないこと！
-
-3. session, user 関連、および root のルーティングを設定する
-
-  config/routes.rb に下記を追加する。
-
-    match '/login'  => "sessions#new"    , :as => :login
-    match '/logout' => "sessions#destroy", :as => :logout
-
-    resource :session, :only => [:new, :create, :destroy]
-
-    resources :users, :except => [:show] do
-      member do
-        get 'change_password'
-        put 'update_password'
-      end
-    end
-
-    root :to => "controller_name#action_name"
-
-  root_path はログイン成功後のリダイレクト先になるが、 このアクションが
-
-    before_filter :authenticate （あるいは :authenticate_as_writer,
-                                  :authenticate_as_administrator）
-
-  の対象になっていないと認証なしにアクションが実行されてしまうので注意する。
-  認証が必要な、その他のコントローラについても同様の記述を追加する。
-
-4. モデル User を用意する
+2. モデル User を用意する
 
   下記のように UserAuthKuma::User を継承する。
 
@@ -110,8 +65,8 @@ UserAuth
 
     rails generate model user name:string name:hashed_password
 
-4-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
-     用意する。
+2-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
+     用意する
 
     カラム名          データ型  用途
    ------------------------------------------------------------
@@ -127,66 +82,113 @@ UserAuth
 
   あるいは User に上記のメソッドをオーバーライドするメソッドを定義してもよい。
 
-5. UsersController を用意する
+3. Rails のプロジェクトルートで以下を実行する
 
-  下記のように UserAuthKuma::UsersController を継承する。
-  before_filter :authenticate (あるいは :authenticate_as_writer,
-  :authenticate_as_administrator）の設定はセキュリティ上重要なので
-  必ず漏れがないように注意する。
+    $ ./vendor/plugins/user_auth/script/prepare.rb [-n|--nobackup]
 
-    class UsersController < UserAuthKuma::UsersController
-      before_filter :authenticate, :only => [:change_password, :update_password]
-      before_filter :authenticate_as_administrator,
-                                 :except => [:change_password, :update_password]
+      -n|--nobackup :  ファイルの内容を変更したときのバックアップファイルを作成しない
 
-6. ユーザ定義の定数ファイルを用意する
+  以下の a. ～ g. が自動実行される。
 
-  下記の内容のファイルを config/initializers の下に適当なファイル名（例えば
-  00_user_auth_kuma_constant.rb など）で用意する。数値自体は任意の値に設定する。
+  (a. session データを DB に保存するための設定をする)
 
-    module UserAuthKuma
-      module Constant
-        SESSION_TIMEOUT_IN_MIN =  5
+    config/initializers/session_store.rb の
 
-        MIN_LENGTH_OF_NAME     =  5
-        MAX_LENGTH_OF_NAME     = 50
-        MIN_LENGTH_OF_PASSWORD =  4
-        MAX_LENGTH_OF_PASSWORD = 20
+      {アプリ名}::Application.config.session_store :cookie_store, :key => ...
+
+    の一文をコメントアウトし、
+   
+      {アプリ名}::Application.config.session_store :active_record_store
+
+    の一文のコメント開始文字 # を削除して有効にする。
+
+    さらに ApplicationController の protect_from_forgery 文を下記のように変更する。
+
+      protect_from_forgery :secret => '（任意のランダムな文字列）'
+
+  (b. session, user 関連、および root のルーティングを設定する)
+
+    config/routes.rb に下記を追加する。
+
+      match '/login'  => "sessions#new"    , :as => :login
+      match '/logout' => "sessions#destroy", :as => :logout
+
+      resource :session, :only => [:new, :create, :destroy]
+
+      resources :users, :except => [:show] do
+        member do
+          get 'change_password'
+          put 'update_password'
+        end
       end
-    end
 
-  最後の KEY_FOR_SESSION_TIMEOUT_NOTICE の値については後述する。
+      root :to => "controller_name#action_name"
 
-7. app/views/layouts/application.html.erb にリンクなどを追加する
+    controller_name, action_name は編集して変更すること。
+    これはログイン成功後のリダイレクト先になるが、このアクションが
 
-  下記、あるいは同等なコードを適当な箇所に追加する。
+      before_filter :authenticate （あるいは :authenticate_as_writer,
+                                    :authenticate_as_administrator）
 
-    <% if logged_in? -%>
-      <%= link_to t("helpers.link.logout"), logout_path %>
-    <% end -%>
+    の対象になっていないと認証なしにアクションが実行されてしまうので注意する。
+    認証が必要な、その他のコントローラについても同様の記述を追加する。
 
-  また、yield 文の前あたりに下記を追加する。
+  (c. UsersController を用意する)
 
-    <%= content_tag :p, notice, :class => "notice" if notice.present? %>
-    <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
+    下記のように UserAuthKuma::UsersController を継承する。
+    before_filter :authenticate (あるいは :authenticate_as_writer,
+    :authenticate_as_administrator）の設定はセキュリティ上重要。
 
-8. 国際化対応の日本語翻訳ファイルを用意する
+      class UsersController < UserAuthKuma::UsersController
+        before_filter :authenticate, :only => [:change_password, :update_password]
+        before_filter :authenticate_as_administrator,
+                                   :except => [:change_password, :update_password]
 
-  config/application.rb に以下を追加する。
+  (d. ユーザ定義の定数ファイルを用意する)
 
-    config.i18n.default_locale = :ja
-    config.i18n.load_path += Dir[Rails.root.join('vendor/plugins/user_auth/locales/**/*.{rb,yml}')]
+    config/initializers/00_user_auth_kuma_constant.rb を下記の内容で用意する。
+    数値自体は任意の値に変更してよい。
 
-  一般用途のファイルは下記よりダウンロードできるので、config/locales
-  ディレクトリに配置する。
+      module UserAuthKuma
+        module Constant
+          SESSION_TIMEOUT_IN_MIN =  5
 
-    https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
+          MIN_LENGTH_OF_NAME     =  5
+          MAX_LENGTH_OF_NAME     = 50
+          MIN_LENGTH_OF_PASSWORD =  4
+          MAX_LENGTH_OF_PASSWORD = 20
+        end
+      end
 
-9. スタイルシートを用意する
+  (e. app/views/layouts/application.html.erb にリンクなどを追加する)
 
-  vendor/plugins/user_auth/stylesheets/user_auth.css をコピーして使う
+    下記を yield 文の直前に下記を追加する。
 
-10. （必要であれば）sessions, users 用の VIEW を用意する
+      <% if logged_in? -%>
+        <%= link_to t("helpers.link.logout"), logout_path %>
+      <% end -%>
+
+      <%= content_tag :p, notice, :class => "notice" if notice.present? %>
+      <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
+
+  (f. 国際化対応の日本語翻訳ファイルを用意する)
+
+    config/application.rb に以下を追加する。
+
+      config.i18n.default_locale = :ja
+      config.i18n.load_path += Dir[Rails.root.join('vendor/plugins/user_auth/locales/**/*.{rb,yml}')]
+
+    さらに、下記よりダウンロードした一般用途のファイル ja.yml を config/locales
+    ディレクトリに配置する。
+
+      https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
+
+  (g. スタイルシートを用意する)
+
+    フォームのエラー表示用の CSS ファイル user_auth.css を public/stylesheets に
+    コピーする。
+
+4. （必要であれば）sessions, users 用の VIEW を用意する
 
   プラグインには下記のファイルが用意されているが、
 
@@ -197,7 +199,7 @@ UserAuth
     app/views/users/index.html.erb
     app/views/users/new.html.erb
 
-  を使いたくないときはプロジェクトの app/views にそれぞれ用意する。
+  上記のファイルを使いたくないときは Rails プロジェクトの app/views にそれぞれ用意する。
   同名のファイルがあれば、プロジェクトのものが使われる。
 
 
@@ -238,6 +240,7 @@ administrator? がクラス User に存在しない場合は、各々アクセ�
 
 インストールされるファイルは以下のとおり。
 
+.
 |-- MIT-LICENSE
 |-- README
 |-- Rakefile
@@ -275,7 +278,29 @@ administrator? がクラス User に存在しない場合は、各々アクセ�
 |   `-- user_auth.rb
 |-- locales
 |   `-- ja.yml
-|-- note.txt
+|-- script
+|   |-- application_controller_modifier.rb
+|   |-- command_line_argument_parser.rb
+|   |-- config_application_modifier.rb
+|   |-- constant_creator.rb
+|   |-- css_user_auth_copier.rb
+|   |-- file_modifier.rb
+|   |-- layout_template_modifier.rb
+|   |-- locale_ja_copier.rb
+|   |-- modifier_or_file_creator.rb
+|   |-- prepare.rb
+|   |-- routes_adder.rb
+|   |-- session_store_modifier.rb
+|   |-- stream_editor.rb
+|   |-- templates
+|   |   |-- 00_user_auth_kuma_constant.rb
+|   |   `-- ja.yml
+|   |-- test
+|   |   `-- stream_editor_test.rb
+|   |-- user_modifier.rb
+|   `-- users_controller_modifier.rb
+|-- stylesheets
+|   `-- user_auth_kuma.css
 |-- test
 |   |-- action_controller_override_test.rb
 |   |-- fixtures
