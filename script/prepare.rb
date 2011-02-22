@@ -50,7 +50,7 @@ class PrepareUserAuth
   private
 
     def message_before_action(modifier)
-      filename = remove_dirname(modifier.target_filename, @rails_root)
+      filename = remove_dirname(modifier.filename_to_edit, @rails_root)
       return "'#{filename}' is being modified by #{modifier.class} ..."
     end
 

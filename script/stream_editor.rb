@@ -11,27 +11,27 @@ require 'tempfile'
 # which were given to initialize_edited_partial() to writer back the edited
 # result to the target file.
 # The original contents of the target file will be saved to a file with
-# filename of "#{target_filename}#{ORIGINAL_EXTENSION}".
+# filename of "#{@filename_to_edit}#{ORIGINAL_EXTENSION}".
 class StreamEditor
   class FileNotFoundError < StandardError; end
 
   TMP_DIR = '/tmp'
   ORIGINAL_EXTENSION = '.original'
 
-  def initialize(filename, creates_backup=true)
-    @filename = filename
+  def initialize(filename_to_edit, creates_backup=true)
+    @filename_to_edit = filename_to_edit
     @creates_backup = creates_backup
 
     @is_edited = false
     @h_edited_partial = Hash.new
 
-    unless File.file?(@filename)
-      raise FileNotFoundError, "Cannot find '#{filename}'"
+    unless File.file?(@filename_to_edit)
+      raise FileNotFoundError, "Cannot find '#{filename_to_edit}'"
     end
   end
 
-  def target_filename
-    return @filename
+  def filename_to_edit
+    return @filename_to_edit
   end
 
   private
@@ -41,11 +41,11 @@ class StreamEditor
   end
 
   def edit
-    f_tmp = Tempfile.new(File.basename(@filename), TMP_DIR)
+    f_tmp = Tempfile.new(File.basename(@filename_to_edit), TMP_DIR)
     raise "Failed to make temporary file in directory '#{TMP_DIR}'" unless f_tmp
 
     begin
-      File.open(@filename, 'r') do |f|
+      File.open(@filename_to_edit, 'r') do |f|
         edit_each_line(f, f_tmp)
       end
       f_tmp.close
@@ -56,7 +56,7 @@ class StreamEditor
           write_back(f_tmp)
           is_written = true
         rescue
-          File.rename(@filename_orig, @filename)
+          File.rename(@filename_orig, @filename_to_edit)
           raise
         end
       end
@@ -115,10 +115,10 @@ class StreamEditor
 
   def write_back(f_tmp)
     @filename_orig = filename_for_original
-    File.rename(@filename, @filename_orig)
+    File.rename(@filename_to_edit, @filename_orig)
 
     f_tmp.open
-    File.open(@filename, 'w') do |f|
+    File.open(@filename_to_edit, 'w') do |f|
       f_tmp.each do |line|
         f.print line
       end
@@ -128,7 +128,7 @@ class StreamEditor
   end
 
   def filename_for_original
-    basename = @filename + ORIGINAL_EXTENSION
+    basename = @filename_to_edit + ORIGINAL_EXTENSION
     name = basename
     suffix = 2
     while File.exist?(name)

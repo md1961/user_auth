@@ -23,7 +23,7 @@ class FileModifier < StreamEditor
 
   def modify
     is_modified = edit
-    @message = "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+    @message = "'#{filename_to_edit}' was #{is_modified ? '' : 'NOT '}modified"
     return is_modified
   end
 

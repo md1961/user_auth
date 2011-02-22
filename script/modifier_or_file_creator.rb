@@ -34,22 +34,22 @@ class ModifierOrFileCreator < StreamEditor
       if @no_target
         is_modified = true
         begin
-          File.open(target_filename, 'w') do |f|
+          File.open(filename_to_edit, 'w') do |f|
             template_file_contents.each do |line|
               f.puts line.chomp
             end
           end
-          @message = "'#{target_filename}' was creted"
+          @message = "'#{filename_to_edit}' was creted"
         rescue => e
           is_modified = false
           @message = e.message
         end
       elsif @no_modify
         is_modified = false
-        @message = "Nothing done because '#{target_filename}' already exists"
+        @message = "Nothing done because '#{filename_to_edit}' already exists"
       else
         is_modified = edit
-        @message = "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+        @message = "'#{filename_to_edit}' was #{is_modified ? '' : 'NOT '}modified"
       end
       return is_modified
     end
