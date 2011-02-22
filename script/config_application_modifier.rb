@@ -1,28 +1,23 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/file_modifier'
 
 
-class ConfigApplicationModifier < StreamEditor
+class ConfigApplicationModifier < FileModifier
 
   TARGET_FILENAME = "config/application.rb"
 
-  def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
+  def initialize(argv)
+    super(argv)
 
     @is_searching = true
     @is_skipping_comment = false
   end
 
-  def modify
-    return edit
-  end
-
   private
 
-    def edit
-      is_edited = super
-      return is_edited
+    def target_filename
+      return TARGET_FILENAME
     end
 
     RE_LOCALE  = /^\s*#.*locale/
@@ -54,14 +49,8 @@ end
 
 
 if __FILE__ == $0
-  target_filename = ConfigApplicationModifier::TARGET_FILENAME
-
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{target_filename}'"
-  end
-
-  cam = ConfigApplicationModifier.new(ARGV[0])
-  is_modified = cam.modify
-  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+  cam = ConfigApplicationModifier.new(ARGV)
+  cam.modify
+  puts cam.message
 end
 
