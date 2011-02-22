@@ -1,27 +1,22 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/stream_editor'
+require File.dirname(__FILE__) + '/file_modifier'
 
 
-class RoutesAdder < StreamEditor
+class RoutesAdder < FileModifier
 
   TARGET_FILENAME = "config/routes.rb"
 
-  def initialize(dirname)
-    super(dirname + '/' + TARGET_FILENAME)
+  def initialize(argv)
+    super(argv)
 
     @status = SearchingKeyword.new
   end
 
-  def modify
-    return edit
-  end
-
   private
 
-    def edit
-      is_edited = super
-      return is_edited
+    def target_filename
+      return TARGET_FILENAME
     end
 
     RE_NAMED_ROUTE    = /^\s*#\s*Sample\s+.*\s*named\s+route/
@@ -157,14 +152,8 @@ end
 
 
 if __FILE__ == $0
-  target_filename = RoutesAdder::TARGET_FILENAME
-
-  if ARGV.size != 1 || ! File.directory?(ARGV[0])
-    raise ArgumentError, "Specify directory which has '#{target_filename}'"
-  end
-
-  ra = RoutesAdder.new(ARGV[0])
-  is_modified = ra.modify
-  puts "'#{target_filename}' was #{is_modified ? '' : 'NOT '}modified"
+  ra = RoutesAdder.new(ARGV)
+  ra.modify
+  puts ra.message
 end
 
