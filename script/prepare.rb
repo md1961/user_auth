@@ -7,6 +7,7 @@ require CURRENT_DIRNAME + '/application_controller_modifier'
 require CURRENT_DIRNAME + '/routes_adder'
 require CURRENT_DIRNAME + '/user_modifier'
 require CURRENT_DIRNAME + '/users_controller_modifier'
+require CURRENT_DIRNAME + '/constant_creator'
 require CURRENT_DIRNAME + '/layout_template_modifier'
 require CURRENT_DIRNAME + '/config_application_modifier'
 
@@ -19,11 +20,12 @@ class PrepareUserAuth
     [RoutesAdder                  , :modify],
     [UserModifier                 , :modify],
     [UsersControllerModifier      , :modify],
+    [ConstantCreator              , :modify],
     [LayoutTemplateModifier       , :modify],
     [ConfigApplicationModifier    , :modify],
   ]
 
-  def initialize
+  def initialize(argv)
     @rails_root = search_rails_root(CURRENT_DIRNAME)
     raise RuntimeError, "Cannot find Rails root directory" unless @rails_root
   end
@@ -33,7 +35,9 @@ class PrepareUserAuth
   def prepare
     MODIFIERS.each do |modifyingClass, action|
       begin
-        modifier = modifyingClass.new(@rails_root)
+        argv = Array.new
+        argv << @rails_root
+        modifier = modifyingClass.new(argv)
         puts message_before_action(modifier)
         is_modified = modifier.send(action)
         puts INDENT + (is_modified ? "Done." : "There is nothing to be done")
@@ -83,7 +87,7 @@ end
 
 
 if __FILE__ == $0
-  pua = PrepareUserAuth.new
+  pua = PrepareUserAuth.new(ARGV)
   pua.prepare
 end
 
