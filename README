@@ -48,20 +48,16 @@ UserAuth
 
   同様の手順で既に DB テーブルを作成済みの場合は、そのまま使える。
 
-2. モデル User を用意する
+2. データベース・テーブル users を用意する
 
-  下記のように UserAuthKuma::User を継承する。
-
-    class User < UserAuthKuma::User
-
-  DBテーブル users のカラムは下記を用意する。
+  カラムは下記を用意する。
 
     カラム名          データ型  用途
    -------------------------------------------------------------
     name              string    ユーザ名
     hashed_password   string    ハッシュ値に変換されたパスワード
 
-  マイグレーションを使うなら、
+  マイグレーションを使うなら以下のようになる。
 
     rails generate model user name:string hashed_password:string
 
@@ -88,7 +84,34 @@ UserAuth
 
       -n|--nobackup :  ファイルの内容を変更したときのバックアップファイルを作成しない
 
-  以下の a. ～ g. が自動実行される。
+  上記コマンドにより修正、あるいは新規作成されるファイルは以下のとおり。
+  詳細な変更内容は、後述の備考を参照のこと。
+
+    修正       : config/initializers/session_store.rb
+    修正       : app/controllers/application_controller.rb
+    修正       : config/routes.rb
+    修正or新規 : app/models/user.rb
+    修正or新規 : app/controllers/users_controller.rb
+    新規作成   : config/initializers/00_user_auth_kuma_constant.rb
+    修正       : app/views/layouts/application.html.erb
+    修正       : config/application.rb
+    新規作成   : public/stylesheets/user_auth.css
+
+4. （必要であれば）sessions, users 用の VIEW を用意する
+
+  プラグインには下記のファイルが用意されているが、
+
+    app/views/sessions/new.html.erb
+    app/views/users/_form.html.erb
+    app/views/users/change_password.html.erb
+    app/views/users/edit.html.erb
+    app/views/users/index.html.erb
+    app/views/users/new.html.erb
+
+  上記のファイルを使いたくないときは Rails プロジェクトの app/views にそれぞれ用意する。
+  同名のファイルがあれば、プロジェクトのものが使われる。
+
+備考)  3. のコマンドにより、以下の a. ～ h. が自動実行される。
 
   (a. session データを DB に保存するための設定をする)
 
@@ -133,18 +156,27 @@ UserAuth
     の対象になっていないと認証なしにアクションが実行されてしまうので注意する。
     認証が必要な、その他のコントローラについても同様の記述を追加する。
 
-  (c. UsersController を用意する)
+  (c. モデル User を用意する)
 
-    下記のように UserAuthKuma::UsersController を継承する。
-    before_filter :authenticate (あるいは :authenticate_as_writer,
-    :authenticate_as_administrator）の設定はセキュリティ上重要。
+    下記のように UserAuthKuma::User を継承するように既存のモデルを修正、
+    あるいは存在しなければ新規に作成する。
+
+      class User < UserAuthKuma::User
+
+  (d. UsersController を用意する)
+
+    下記のように UserAuthKuma::UsersController を継承するに既存のコントローラを
+    修正、あるいは存在しなければ新規に作成する。
 
       class UsersController < UserAuthKuma::UsersController
         before_filter :authenticate, :only => [:change_password, :update_password]
         before_filter :authenticate_as_administrator,
                                    :except => [:change_password, :update_password]
 
-  (d. ユーザ定義の定数ファイルを用意する)
+    before_filter :authenticate (あるいは :authenticate_as_writer,
+    :authenticate_as_administrator）の設定はセキュリティ上重要。
+
+  (e. ユーザ定義の定数ファイルを用意する)
 
     config/initializers/00_user_auth_kuma_constant.rb を下記の内容で用意する。
     数値自体は任意の値に変更してよい。
@@ -160,7 +192,7 @@ UserAuth
         end
       end
 
-  (e. app/views/layouts/application.html.erb にリンクなどを追加する)
+  (f. app/views/layouts/application.html.erb にリンクなどを追加する)
 
     下記を yield 文の直前に下記を追加する。
 
@@ -171,7 +203,7 @@ UserAuth
       <%= content_tag :p, notice, :class => "notice" if notice.present? %>
       <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
 
-  (f. 国際化対応の日本語翻訳ファイルを用意する)
+  (g. 国際化対応の日本語翻訳ファイルを用意する)
 
     config/application.rb に以下を追加する。
 
@@ -183,24 +215,10 @@ UserAuth
 
       https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
 
-  (g. スタイルシートを用意する)
+  (h. スタイルシートを用意する)
 
     フォームのエラー表示用の CSS ファイル user_auth.css を public/stylesheets に
     コピーする。
-
-4. （必要であれば）sessions, users 用の VIEW を用意する
-
-  プラグインには下記のファイルが用意されているが、
-
-    app/views/sessions/new.html.erb
-    app/views/users/_form.html.erb
-    app/views/users/change_password.html.erb
-    app/views/users/edit.html.erb
-    app/views/users/index.html.erb
-    app/views/users/new.html.erb
-
-  上記のファイルを使いたくないときは Rails プロジェクトの app/views にそれぞれ用意する。
-  同名のファイルがあれば、プロジェクトのものが使われる。
 
 
 使用方法
