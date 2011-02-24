@@ -49,6 +49,7 @@ class ActionController::Base
     # ログイン画面にリダイレクトして false を返す
     # 返り値 :: 常に false
     def access_denied
+      reset_session
       redirect_to login_path and return false
     end
 
