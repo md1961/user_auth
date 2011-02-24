@@ -63,7 +63,7 @@ UserAuth
 
   マイグレーションを使うなら、
 
-    rails generate model user name:string name:hashed_password
+    rails generate model user name:string hashed_password:string
 
 2-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
      用意する

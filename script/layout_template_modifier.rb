@@ -68,14 +68,14 @@ class LayoutTemplateModifier < FileModifier
 
   LINES_LOGOUT = [
     "  <% if logged_in? -%>\n",
-    "    <%= link_to t(""helpers.link.logout""), logout_path %>\n",
+    "    <%= link_to t(\"helpers.link.logout\"), logout_path %>\n",
     "  <% end -%>\n",
   ]
   LINES_NOTICE = [
-    "  <%= content_tag :p, notice, :class => ""notice"" if notice.present? %>\n",
+    "  <%= content_tag :p, notice, :class => \"notice\" if notice.present? %>\n",
   ]
   LINES_ALERT = [
-    "  <%= content_tag :p, alert , :class => ""alert""  if alert .present? %>\n",
+    "  <%= content_tag :p, alert , :class => \"alert\"  if alert .present? %>\n",
   ]
 end
 
