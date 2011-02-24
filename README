@@ -97,7 +97,37 @@ UserAuth
     修正       : config/application.rb
     新規作成   : public/stylesheets/user_auth.css
 
-4. （必要であれば）sessions, users 用の VIEW を用意する
+4. ユーザ認証によるアクセス制限を各コントローラに設定する
+
+  before_filter :authenticate（あるいは :authenticate_as_writer、
+  または :authenticate_as_administrator）をアクセス制限対象となる
+  アクションに設定する。
+
+    authenticate                  : ユーザ認証を必要とする
+    authenticate_as_writer        : ユーザ認証と書き込み権限を必要とする
+    authenticate_as_administrator : ユーザ認証と管理者権限を必要とする
+
+  例えば、
+
+    before_filter :authenticate
+
+  を記述したコントローラのすべてのアクションが、あらかじめユーザ認証を
+  受けておかないと実行できないようになる（実際はログイン画面に遷移される）。
+
+5. ルートパスを設定する
+
+  config/routes.rb の最下部あたりの
+
+    root :to => "controller_name#action_name"
+
+  の 'controller_name' と 'action_name' を然るべきものに修正する。
+
+  これはログイン成功後のリダイレクト先になるが、このアクションが上記 4. の
+  before_filter :authenticate（あるいは :authenticate_as_writer、 または
+  :authenticate_as_administrator）の対象になっていないとユーザ認証なしに
+  アクションが実行されてしまうので注意する。
+
+6. （必要であれば）sessions, users 用の VIEW を用意する
 
   プラグインには下記のファイルが用意されているが、
 
@@ -147,15 +177,6 @@ UserAuth
 
       root :to => "controller_name#action_name"
 
-    controller_name, action_name は編集して変更すること。
-    これはログイン成功後のリダイレクト先になるが、このアクションが
-
-      before_filter :authenticate （あるいは :authenticate_as_writer,
-                                    :authenticate_as_administrator）
-
-    の対象になっていないと認証なしにアクションが実行されてしまうので注意する。
-    認証が必要な、その他のコントローラについても同様の記述を追加する。
-
   (c. モデル User を用意する)
 
     下記のように UserAuthKuma::User を継承するように既存のモデルを修正、
@@ -172,9 +193,6 @@ UserAuth
         before_filter :authenticate, :only => [:change_password, :update_password]
         before_filter :authenticate_as_administrator,
                                    :except => [:change_password, :update_password]
-
-    before_filter :authenticate (あるいは :authenticate_as_writer,
-    :authenticate_as_administrator）の設定はセキュリティ上重要。
 
   (e. ユーザ定義の定数ファイルを用意する)
 
