@@ -68,6 +68,7 @@ class LayoutTemplateModifier < FileModifier
 
   LINES_LOGOUT = [
     "  <% if logged_in? -%>\n",
+    "    <%= link_to t(\"helpers.link.user.change_password\"), change_password_user_path(current_user) %>\n",
     "    <%= link_to t(\"helpers.link.logout\"), logout_path %>\n",
     "  <% end -%>\n",
   ]

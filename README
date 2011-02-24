@@ -216,6 +216,7 @@ UserAuth
     下記を yield 文の直前に下記を追加する。
 
       <% if logged_in? -%>
+        <%= link_to t("helpers.link.user.change_password"), change_password_user_path(current_user) %>
         <%= link_to t("helpers.link.logout"), logout_path %>
       <% end -%>
 
