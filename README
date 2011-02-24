@@ -95,6 +95,7 @@ UserAuth
     新規作成   : config/initializers/00_user_auth_kuma_constant.rb
     修正       : app/views/layouts/application.html.erb
     修正       : config/application.rb
+    新規作成   : config/locales/ja.yml
     新規作成   : public/stylesheets/user_auth.css
 
 4. ユーザ認証によるアクセス制限を各コントローラに設定する
