@@ -10,7 +10,8 @@ class ConfigApplicationModifier < FileModifier
   def initialize(argv)
     super(argv)
 
-    @is_searching = true
+    @is_searching_first  = true
+    @is_searching_second = false
     @is_skipping_comment = false
   end
 
@@ -23,24 +24,43 @@ class ConfigApplicationModifier < FileModifier
     RE_LOCALE  = /^\s*#.*locale/
     RE_COMMENT = /^\s*#/
 
-    #TODO: Do something to default_locale setting already there.
+    #TODO: Do something to default_locale other than :ja setting already there.
 
     # Returns a String, or Array of String's to print
     def edit_line(line)
       inserting_lines = Array.new
-      if line =~ RE_LOCALE && @is_searching
-        @is_searching = false
+      if line =~ RE_LOCALE && @is_searching_first
+        @is_searching_first  = false
         @is_skipping_comment = true
       elsif line !~ RE_COMMENT && @is_skipping_comment
         @is_skipping_comment = false
-        pattern = LINES_TO_INSERT[0].chomp.strip.gsub(/\s+/, '\s+')
-        unless line =~ /#{pattern}/
-          inserting_lines = LINES_TO_INSERT
-          set_edited(true)
+        @is_searching_second = true
+        [:first, :second].each do |index|
+          line_to_insert = line_to_insert(index, line)
+          break unless line_to_insert
+          inserting_lines << line_to_insert
+          @is_searching_second = false
         end
+      elsif @is_searching_second
+        @is_searching_second = false
+        line_to_insert = line_to_insert(:second, line)
+        inserting_lines << line_to_insert if line_to_insert
       end
 
       return inserting_lines + [line]
+    end
+
+    def line_to_insert(index, line)
+      line_to_insert = LINES_TO_INSERT[index == :first ? 0 : 1]
+      unless line =~ /#{make_pattern(line_to_insert)}/
+        set_edited(true)
+        return line_to_insert
+      end
+      return nil
+    end
+
+    def make_pattern(line)
+      return Regexp.escape(line.chomp.strip).gsub(/\\\s/, '\s+')
     end
 
   LINES_TO_INSERT = [
