@@ -19,10 +19,10 @@ class RoutesAdder < FileModifier
       return TARGET_FILENAME
     end
 
-    RE_NAMED_ROUTE    = /^\s*#\s*Sample\s+.*\s*named\s+route/
-    RE_RESOURCE_ROUTE = /^\s*#\s*Sample\s*resource\s*route/
-    RE_ROOT_ROUTE     = /^\s*#\s*root\s+:to\s*=>\s*"/
-    RE_COMMENT        = /^\s*#/
+    RE_COMMENTED_OUT_NAMED_ROUTE    = /^\s*#\s*Sample\s+.*\s*named\s+route/
+    RE_COMMENTED_OUT_RESOURCE_ROUTE = /^\s*#\s*Sample\s*resource\s*route/
+    RE_COMMENTED_OUT_ROOT_ROUTE     = /^\s*#\s*root\s+:to\s*=>\s*"/
+    RE_COMMENT                      = /^\s*#/
 
     # Returns a String, or Array of String's to print
     def edit_line(line)
@@ -55,11 +55,11 @@ class RoutesAdder < FileModifier
   class SearchingKeyword < ParseStatus
     def edit_line(line)
       self.next_status = case line
-        when RE_NAMED_ROUTE
+        when RE_COMMENTED_OUT_NAMED_ROUTE
           InsertingRoute.instance(InsertingNamedRoute)
-        when RE_RESOURCE_ROUTE
+        when RE_COMMENTED_OUT_RESOURCE_ROUTE
           InsertingRoute.instance(InsertingResourceRoute)
-        when RE_ROOT_ROUTE
+        when RE_COMMENTED_OUT_ROOT_ROUTE
           InsertingRoute.instance(InsertingRootRoute)
         else
           SearchingKeyword.new
@@ -92,7 +92,7 @@ class RoutesAdder < FileModifier
         self.next_status = SearchingKeyword.new
         key = self.class.name.intern
         @@h_times_of_insertion[key] += 1
-        unless line =~ search_pattern(lines_to_insert)  # Not to insert same lines again
+        unless line =~ regexp_for_already_inserted(lines_to_insert)  # Not to insert same lines again
           inserting_lines = lines_to_insert
           self.is_edited = true
         end
@@ -103,10 +103,19 @@ class RoutesAdder < FileModifier
 
     private
 
-      def search_pattern(lines)
+      def regexp_for_already_inserted(lines)
+        regexp = regexp_for_root_route(lines)
+        return regexp if regexp
         raise ArgumentError, "Argument lines must be an Array" unless lines.is_a?(Array)
         pattern = lines[0].chomp.strip.gsub(/\s+/, '\s+').gsub(/\[/, '\[').gsub(/\]/, '\]')
         return /#{pattern}/
+      end
+
+      def regexp_for_root_route(lines)
+        if lines.size == 1 && lines[0] =~ RE_ROOT_ROUTE
+          return RE_ROOT_ROUTE
+        end
+        return nil
       end
   end
 
@@ -143,6 +152,8 @@ class RoutesAdder < FileModifier
     "    end\n",
     "  end\n",
   ]
+
+  RE_ROOT_ROUTE = /\A\s*root\s+:to\s*=>/
 
   LINES_ROOT_ROUTE = [
     "  root :to => \"controller_name#action_name\"\n",
