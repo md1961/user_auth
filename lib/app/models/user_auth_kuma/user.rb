@@ -56,7 +56,6 @@ class User < ActiveRecord::Base
   def reset_password
     tmp_passwd = temporary_password
     self.password = tmp_passwd
-    save!
     return tmp_passwd
   end
 
