@@ -154,6 +154,14 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  def test_reset_password
+    user = User.new
+    assert_nil(user.password, "user.password before")
+    retval = user.reset_password
+    assert_equal(retval, user.password, "return value & user.password after")
+    assert_temporary_password(retval)
+  end
+
   def test_encrypt_new_password
     user = User.new
     user.instance_eval do
