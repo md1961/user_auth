@@ -193,29 +193,32 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  LENGTH     = UserAuthKuma::Constant::TemporaryPassword::LENGTH
-  NUM_DIGITS = UserAuthKuma::Constant::TemporaryPassword::NUM_DIGITS
-  NUM_SIGNS  = UserAuthKuma::Constant::TemporaryPassword::NUM_SIGNS 
-  NUM_UPPERS = UserAuthKuma::Constant::TemporaryPassword::NUM_UPPERS
-  NUM_LOWERS = UserAuthKuma::Constant::TemporaryPassword::NUM_LOWERS
-  SIGNS      = UserAuthKuma::Constant::TemporaryPassword::SIGNS
-
-  TIMES_TO_TEST_TEMPORARY_PASSWORD = 100
+  TIMES_TO_TEST_TEMPORARY_PASSWORD = 50
 
   def test_temporary_password
     user = User.new
-    signs = Regexp.escape(SIGNS.join)
 
     TIMES_TO_TEST_TEMPORARY_PASSWORD.times do
       actual = nil
       user.instance_eval { actual = temporary_password }
+      assert_temporary_password(actual)
+    end
+  end
+
+    LENGTH     = UserAuthKuma::Constant::TemporaryPassword::LENGTH
+    NUM_DIGITS = UserAuthKuma::Constant::TemporaryPassword::NUM_DIGITS
+    NUM_SIGNS  = UserAuthKuma::Constant::TemporaryPassword::NUM_SIGNS 
+    NUM_UPPERS = UserAuthKuma::Constant::TemporaryPassword::NUM_UPPERS
+    NUM_LOWERS = UserAuthKuma::Constant::TemporaryPassword::NUM_LOWERS
+    SIGNS      = Regexp.escape(UserAuthKuma::Constant::TemporaryPassword::SIGNS.join)
+
+    def assert_temporary_password(actual)
       assert_equal(LENGTH    , actual.length            , "length of #{actual.inspect}")
       assert_equal(NUM_LOWERS, count_char(actual, 'a-z'), "num lowers of #{actual.inspect}")
       assert_equal(NUM_UPPERS, count_char(actual, 'A-Z'), "num uppers of #{actual.inspect}")
       assert_equal(NUM_DIGITS, count_char(actual, '0-9'), "num digits of #{actual.inspect}")
-      assert_equal(NUM_SIGNS , count_char(actual, signs), "num signs of #{actual.inspect}")
+      assert_equal(NUM_SIGNS , count_char(actual, SIGNS), "num signs of #{actual.inspect}")
     end
-  end
 
     def count_char(str, pattern)
       return str.gsub(/[^#{pattern}]/, '').length
