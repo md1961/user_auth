@@ -50,6 +50,16 @@ class User < ActiveRecord::Base
     return respond_to?(:is_administrator) && is_administrator
   end
 
+  # パスワードをリセットする。具体的には、現在のパスワードを上書きして
+  # 一時的なパスワードを設定する
+  # 返り値 :: 設定した一時的なパスワード
+  def reset_password
+    tmp_passwd = temporary_password
+    self.password = tmp_passwd
+    save!
+    return tmp_passwd
+  end
+
   protected
 
     # 入力されたパスワードを暗号化して、属性 hashed_password に設定する。
