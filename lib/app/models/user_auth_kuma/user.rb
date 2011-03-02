@@ -70,10 +70,10 @@ class User < ActiveRecord::Base
     # 返り値 :: 一時的なパスワード
     def temporary_password
       chars = Array.new
-      TemporaryPassword::NUM_DIGITS.times { chars << pick_digit }
-      TemporaryPassword::NUM_SIGNS .times { chars << pick_sign  }
-      TemporaryPassword::NUM_UPPERS.times { chars << pick_upper }
-      TemporaryPassword::NUM_LOWERS.times { chars << pick_lower }
+      UserAuthKuma::Constant::TemporaryPassword::NUM_DIGITS.times { chars << pick_digit }
+      UserAuthKuma::Constant::TemporaryPassword::NUM_SIGNS .times { chars << pick_sign  }
+      UserAuthKuma::Constant::TemporaryPassword::NUM_UPPERS.times { chars << pick_upper }
+      UserAuthKuma::Constant::TemporaryPassword::NUM_LOWERS.times { chars << pick_lower }
       return chars.shuffle.join
     end
 
@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
     end
 
     def pick_sign
-      return TemporaryPassword::SIGNS.sample
+      return UserAuthKuma::Constant::TemporaryPassword::SIGNS.sample
     end
 
     def pick_upper
@@ -91,16 +91,6 @@ class User < ActiveRecord::Base
 
     def pick_lower
       return (?a .. ?z).to_a.sample
-    end
-
-    module TemporaryPassword
-      LENGTH     = 12
-      NUM_DIGITS =  2
-      NUM_SIGNS  =  1
-      NUM_UPPERS =  2
-      NUM_LOWERS = LENGTH - NUM_DIGITS - NUM_SIGNS - NUM_UPPERS
-
-      SIGNS = %w(! # $ % & + - * / = @ ?)
     end
 end
 
