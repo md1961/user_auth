@@ -13,6 +13,10 @@ class TestsController < ActionController::Base
     check_timeout
     redirect_to login_path
   end
+
+  def reset_session
+    session.clear
+  end
 end
 
 
@@ -54,8 +58,9 @@ class TestsControllerTest < ActionController::TestCase
     restore_logged_in_q
 
     override_logged_in_q(false)
-    get :get_authenticate
+    get :get_authenticate, {}, :a_key => 'a_value'
     assert_redirected_to '/login'
+    assert_nil(session[:a_key], "session[:a_key]")
     restore_logged_in_q
   end
 
@@ -63,10 +68,27 @@ class TestsControllerTest < ActionController::TestCase
     msg = "authenticate_as_writer() should return false if User#writer?() not defined"
     override_current_user(create_user_mock)
     override_logged_in_q(true)
-    get :get_authenticate_as_writer
+    get :get_authenticate_as_writer, {}, :a_key => 'a_value'
     assert_redirected_to '/login'
+    assert_nil(session[:a_key], "session[:a_key]")
     restore_logged_in_q
     restore_current_user
+  end
+
+  def test_authenticate_as_writer_for_not_authenticated
+    [
+      [true , false],
+      [false, true ],
+      [false, false],
+    ].each do |is_writer, is_logged_in|
+      override_current_user(create_user_mock(:writer?, is_writer))
+      override_logged_in_q(is_logged_in)
+      get :get_authenticate_as_writer, {}, :a_key => 'a_value'
+      assert_redirected_to '/login'
+      assert_nil(session[:a_key], "session[:a_key]")
+      restore_logged_in_q
+      restore_current_user
+    end
   end
 
   def test_authenticate_as_writer
@@ -77,40 +99,20 @@ class TestsControllerTest < ActionController::TestCase
     assert(@controller.send(:authenticate_as_writer), "authenticate_as_writer() should return true")
     restore_logged_in_q
     restore_current_user
-
-    [
-      [true , false],
-      [false, true ],
-      [false, false],
-    ].each do |is_writer, is_logged_in|
-      override_current_user(create_user_mock(:writer?, is_writer))
-      override_logged_in_q(is_logged_in)
-      get :get_authenticate_as_writer
-      assert_redirected_to '/login'
-      restore_logged_in_q
-      restore_current_user
-    end
   end
 
   def test_authenticate_as_administrator_without_user_administrator_q_defined
     msg = "authenticate_as_administrator() should return false if User#administrator?() not defined"
     override_current_user(create_user_mock)
     override_logged_in_q(true)
-    get :get_authenticate_as_administrator
+    get :get_authenticate_as_administrator, {}, :a_key => 'a_value'
     assert_redirected_to '/login'
+    assert_nil(session[:a_key], "session[:a_key]")
     restore_logged_in_q
     restore_current_user
   end
 
-  def test_authenticate_as_administrator
-    is_administrator    = true
-    is_logged_in = true
-    override_current_user(create_user_mock(:administrator?, is_administrator))
-    override_logged_in_q(is_logged_in)
-    assert(@controller.send(:authenticate_as_administrator), "authenticate_as_administrator() should return true")
-    restore_logged_in_q
-    restore_current_user
-
+  def test_authenticate_as_administrator_for_not_authenticated
     [
       [true , false],
       [false, true ],
@@ -118,11 +120,22 @@ class TestsControllerTest < ActionController::TestCase
     ].each do |is_administrator, is_logged_in|
       override_current_user(create_user_mock(:administrator?, is_administrator))
       override_logged_in_q(is_logged_in)
-      get :get_authenticate_as_administrator
+      get :get_authenticate_as_administrator, {}, :a_key => 'a_value'
       assert_redirected_to '/login'
+      assert_nil(session[:a_key], "session[:a_key]")
       restore_logged_in_q
       restore_current_user
     end
+  end
+
+  def test_authenticate_as_administrator
+    is_administrator = true
+    is_logged_in     = true
+    override_current_user(create_user_mock(:administrator?, is_administrator))
+    override_logged_in_q(is_logged_in)
+    assert(@controller.send(:authenticate_as_administrator), "authenticate_as_administrator() should return true")
+    restore_logged_in_q
+    restore_current_user
   end
 
   USER_MOCK = :user_mock
@@ -173,8 +186,9 @@ class TestsControllerTest < ActionController::TestCase
   end
 
   def test_access_denied
-    get :get_access_denied
+    get :get_access_denied, {}, :a_key => 'a_value'
     assert_redirected_to '/login'
+    assert_nil(session[:a_key], "session[:a_key]")
     #TODO: How can we test "return false"?
   end
 
