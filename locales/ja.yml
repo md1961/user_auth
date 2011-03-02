@@ -39,6 +39,7 @@ ja:
         edit: "編集"
         destroy: "削除"
         change_password: "パスワードの変更"
+        reset_password: "パスワードのリセット"
 
     confirm:
       user:

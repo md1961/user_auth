@@ -83,6 +83,19 @@ class UsersController < ApplicationController
       render :change_password
     end
   end
+
+  # パスワードをリセットする。<br />
+  # 具体的には、現在のパスワードを上書きして一時的なパスワードを設定する<br />
+  # <em>params[:id]</em> : パスワードをリセットする User の id
+  def reset_password
+    @user = User.find(params[:id])
+    @new_password = @user.reset_password
+    if @user.save
+      render
+    else
+      render :reset_password_failed
+    end
+  end
 end
 
 end

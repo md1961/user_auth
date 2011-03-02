@@ -172,7 +172,7 @@ Rails 3 のみに対応
 
       resources :users, :except => [:show] do
         member do
-          get 'change_password'
+          get 'change_password', 'reset_password'
           put 'update_password'
         end
       end

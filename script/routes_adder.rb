@@ -147,7 +147,7 @@ class RoutesAdder < FileModifier
     "\n",
     "  resources :users, :except => [:show] do\n",
     "    member do\n",
-    "      get 'change_password'\n",
+    "      get 'change_password', 'reset_password'\n",
     "      put 'update_password'\n",
     "    end\n",
     "  end\n",
