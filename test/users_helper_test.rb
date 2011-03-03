@@ -71,6 +71,19 @@ class UsersHelperTest < ActionView::TestCase
     end
     private :users_path, :user_path
 
+  def test_eval_or_nil
+    [
+      [nil  , nil],
+      [false, nil],
+      [0    , nil],
+      ['abracadabra', nil],
+      ['users_path' , USERS_PATH],
+      ['user_path'  , USER_PATH ],
+    ].each do |arg, expected|
+      assert_equal(expected, eval_or_nil(arg), "eval_or_nil(#{arg.inspect})")
+    end
+  end
+
   def test_object_boolean_q
     assert(true .boolean?, "true.boolean? should be true")
     assert(false.boolean?, "false.boolean? should be true")
