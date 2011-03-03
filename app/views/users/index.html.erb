@@ -1,8 +1,11 @@
 
 <h1><%= t("helpers.page_title.users.index") %></h1>
 
+<% path_from_constant = eval_or_nil(UserAuthKuma::Constant::CANCEL_PATH_FROM_USERS_INDEX) -%>
 <p>
   <%= link_to t("helpers.link.user.new"), new_user_path %>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <%= link_to t("helpers.link.user.cancel"), path_from_constant || root_path %>
 </p>
 
 <table id="table_users" class="table_base">
@@ -36,3 +39,6 @@
   <% end -%>
 </table>
 
+<p>
+  <%= link_to t("helpers.link.user.cancel"), path_from_constant || root_path %>
+</p>
