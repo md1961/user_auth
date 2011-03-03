@@ -219,6 +219,9 @@ Rails 3 のみに対応
 
             SIGNS = %w(! # $ % & + - * / = @ ?)
           end
+
+          CANCEL_PATH_FROM_USERS_INDEX     = nil
+          CANCEL_PATH_FROM_CHANGE_PASSWORD = nil
         end
       end
 

@@ -31,6 +31,15 @@ module UsersHelper
     url, method = user.new_record? ? [users_path, :post] : [user_path, :put]
     return {:as => :user, :url => url, :html => {:method => method}}
   end
+
+  def eval_or_nil(expr)
+    begin
+      return eval(expr)
+    rescue
+    end
+
+    return nil
+  end
 end
 
 end

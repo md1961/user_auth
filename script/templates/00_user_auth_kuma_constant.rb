@@ -16,5 +16,11 @@ module UserAuthKuma
 
       SIGNS = %w(! # $ % & + - * / = @ ?)
     end
+
+    # Give expression in string to be evaluated by Kernel#eval() such as "users_path"
+    # when you want to override default link 'Cancel' destination to root_path
+    # in VIEW 'users#index', 'users#change_password', respectively
+    CANCEL_PATH_FROM_USERS_INDEX     = nil
+    CANCEL_PATH_FROM_CHANGE_PASSWORD = nil
   end
 end
