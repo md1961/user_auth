@@ -9,31 +9,15 @@ Rails 3 のみに対応
 ====
 
 - ユーザ認証によりアクセス制限を行う。
+  パスワードは SHA-1 により暗号化されて DB に保存される。
 
-- パスワードは SHA-1 により暗号化されて DB に保存される。
+- session データは DB に保存する。
 
-- before_filter :authenticate（あるいは :authenticate_as_writer、
-  または :authenticate_as_administrator）の対象となるアクションに
-  認証手続きなしに、あるいは権限不足でアクセスするとログイン画面
-  （名前付きルート login_path）にリダイレクトする。
+- 追加される機能は、ログイン・ログアウト機能、ユーザ一覧・新規追加・編集・
+  削除・パスワード変更・パスワードリセット各機能。
 
-    authenticate                  : ユーザ認証を必要とする
-    authenticate_as_writer        : ユーザ認証と書き込み権限を必要とする
-    authenticate_as_administrator : ユーザ認証と管理者権限を必要とする
-
-  書き込み権限、および管理者権限はそれぞれ User#writer?(),
-  User#administrator?() で確認される。
-
-- change_password_user_path(current_user) に遷移することによりパスワード
-  変更画面が表示される。
-
-- users_path に遷移することによりユーザ一覧画面が表示される。
-  ユーザ一覧画面より、ユーザの新規作成・編集・削除を行うことができる。
-
-- 下記のヘルパー・メソッドが追加される。
-
-    logged_in?()   : ログインしているか評価する
-    current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
+- 画面は、ログイン画面、パスワード変更画面、ユーザ一覧・新規追加・編集画面が
+  それぞれ用意される。app/views/sessions, app/views/users で再定義してもよい。
 
 
 準備
@@ -270,8 +254,10 @@ Rails 3 のみに対応
 上記のように設定した場合は、すべてのアクションに先立ってユーザ認証が必要になる。
 new, edit, create, update, destroy については、メソッド writer? が true を返す
 ユーザのみがユーザ認証を経たのちに アクセス可能になり、さらに destroy はメソッド
-administrator? が true を返すユーザのみに制限がかかる。メソッド writer? や
-administrator? がクラス User に存在しない場合は、各々アクセスはできない。
+administrator? が true を返すユーザのみに制限がかかる。
+テーブル users にカラム is_writer, is_administrator が存在しない場合は、 メソッド
+writer? および administrator? はそれぞれ false を返す。また、クラス User で各々
+再定義して動作をオーバーライトしてもよい。
 
 認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
 しないまま 経過すると、自動的にログアウトされる。
@@ -290,7 +276,7 @@ administrator? がクラス User に存在しない場合は、各々アクセ�
 ファイル
 ========
 
-インストールされるファイルは以下のとおり。
+インストールされる主なファイルは以下のとおり。
 
 .
 |-- MIT-LICENSE
@@ -307,7 +293,9 @@ administrator? がクラス User に存在しない場合は、各々アクセ�
 |           |-- change_password.html.erb
 |           |-- edit.html.erb
 |           |-- index.html.erb
-|           `-- new.html.erb
+|           |-- new.html.erb
+|           |-- reset_password.ja.html.erb
+|           `-- reset_password_failed.ja.html.erb
 |-- init.rb
 |-- install.rb
 |-- lib
