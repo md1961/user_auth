@@ -15,6 +15,8 @@ require CURRENT_DIRNAME + '/css_user_auth_copier'
 
 require CURRENT_DIRNAME + '/command_line_argument_parser'
 
+require CURRENT_DIRNAME + '/overriding_check'
+
 
 class PrepareUserAuth
 
@@ -52,14 +54,27 @@ class PrepareUserAuth
         modifier = modifyingClass.new(argv)
         puts message_before_action(modifier)
         is_modified = modifier.send(action)
-        puts INDENT + (is_modified ? "Done." : "There is nothing to be done")
+        puts INDENT + (is_modified ? "Done." : "NOTHING to be done")
       rescue => e
         puts INDENT + "Failed due to #{e.message}"
       end
     end
+
+    check_override
   end
 
   private
+
+    def check_override
+      oc = OverridingChecker.new
+      oc.check
+      message = oc.message 
+      if message && ! message.empty?
+        puts
+        puts message
+        puts "Check whether the above files/methods are OK to exist"
+      end
+    end
 
     def message_before_action(modifier)
       filename = remove_dirname(modifier.filename_to_edit, @rails_root)

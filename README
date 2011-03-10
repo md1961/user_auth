@@ -63,7 +63,9 @@ Rails 3 のみに対応
 
   あるいは User に上記のメソッドをオーバーライドするメソッドを定義してもよい。
 
-3. Rails のプロジェクトルートで以下を実行する
+3. 必要なファイル追加や修正を行うスクリプトを実行する
+
+  Rails のプロジェクトルートで以下を実行する。
 
     $ ./vendor/plugins/user_auth/script/prepare.rb [-n|--nobackup]
 
@@ -82,6 +84,14 @@ Rails 3 のみに対応
     修正       : config/application.rb
     新規作成   : config/locales/ja.yml
     新規作成   : public/stylesheets/user_auth.css
+
+  また、
+
+    $ ./vendor/plugins/user_auth/script/overriding_check.rb
+
+  を実行することで、Rails のプロジェクトファイルやメソッドに本プラグインの
+  ファイルやメソッドをオーバーライドしているものがあるかチェックできる。
+  本スクリプトは上記の prepare.rb からも実行される。
 
 4. ユーザ認証によるアクセス制限を各コントローラに設定する
 
