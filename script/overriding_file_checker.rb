@@ -1,37 +1,41 @@
 #! /bin/env ruby
 
-PLUGIN_DIR = File.dirname(__FILE__) + '/..'
 
 class OverridingFileChecker
+  attr_reader :message
+
+  PLUGIN_DIR = File.dirname(__FILE__) + '/..'
 
   VIEW_DIR = "app/views"
   VIEW_SUBDIRS = %w(sessions users)
 
-  def initialize(target_dir=".")
-    raise IOError, "Cannot find directory '#{target_dir}'" unless target_dir && File.directory?(target_dir)
-
-    @target_dir = target_dir
+  def initialize
+    #raise IOError, "Cannot find directory '#{target_dir}'" unless File.directory?(target_dir)
+    @message = nil
   end
+
+  INDENT = ' ' * 2
 
   UNNECESSARY_FILES = %w(. ..)
 
   def check
+    @message = nil
+
     overriding_files = Array.new
     VIEW_SUBDIRS.each do |subdir|
       source_dir = File.join(PLUGIN_DIR, VIEW_DIR, subdir)
-      files = Dir.entries(source_dir).reject { |name| UNNECESSARY_FILES.include?(name) }
+      filenames = Dir.entries(source_dir).reject { |name| UNNECESSARY_FILES.include?(name) }
 
-      dest_dir = File.join(@target_dir, VIEW_DIR, subdir)
-      files.each do |file|
-        file_full = File.join(dest_dir, file)
-        overriding_files << file_full if File.exist?(file_full)
+      dest_dir = File.join(VIEW_DIR, subdir)
+      filenames.each do |filename|
+        full_filename = File.join(dest_dir, filename)
+        overriding_files << full_filename if File.exist?(full_filename)
       end
     end
 
-    indent = "  "
     unless overriding_files.empty?
-      puts "The following file(s) are concealing the corresponding file in the plugin:"
-      puts overriding_files.map { |name| indent + name}.join("\n")
+      @message  = "The following file(s) are concealing the corresponding file in the plugin:\n"
+      @message += overriding_files.map { |name| INDENT + name }.join("\n")
     end
   end
 end
@@ -40,5 +44,6 @@ end
 if __FILE__ == $0
   ofc = OverridingFileChecker.new
   ofc.check
+  puts ofc.message
 end
 
