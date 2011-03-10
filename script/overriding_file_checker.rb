@@ -2,7 +2,7 @@
 
 PLUGIN_DIR = File.dirname(__FILE__) + '/..'
 
-class OverrideChecker
+class OverridingFileChecker
 
   VIEW_DIR = "app/views"
   VIEW_SUBDIRS = %w(sessions users)
@@ -38,7 +38,7 @@ end
 
 
 if __FILE__ == $0
-  oc = OverrideChecker.new
-  oc.check
+  ofc = OverridingFileChecker.new
+  ofc.check
 end
 
