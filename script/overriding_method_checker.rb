@@ -2,6 +2,7 @@
 
 
 class OverridingMethodChecker
+  attr_reader :message
 
   PLUGIN_LIB_DIR = File.dirname(__FILE__) + '/../lib'
 
@@ -15,13 +16,15 @@ class OverridingMethodChecker
     overridden: [PLUGIN_LIB_DIR, "user_auth_kuma"],
   }
 
-  INDENT = "  "
+  INDENT = ' ' * 2
 
   def check
+    @message = ""
+
     FILENAMES_WITH_DIR_TO_CHECK.each do |filename, dir|
       h_methods = Hash.new
-      H_ROOT_DIRS_AND_NAMESPACES.each do |name, root_and_ns|
-        root_dir, namespace = root_and_ns
+      H_ROOT_DIRS_AND_NAMESPACES.each do |name, root_dir_and_namespace|
+        root_dir, namespace = root_dir_and_namespace
         full_filename = File.join(root_dir, dir, namespace, filename)
         h_methods[name] = user_defined_methods(full_filename)
       end
@@ -32,8 +35,9 @@ class OverridingMethodChecker
         overriding_methods << method if h_methods[:overriding].include?(method)
       end
       unless overriding_methods.empty?
-        puts "The following methods in '#{overriding_filename}' are overriding the ones in the plugin"
-        puts overriding_methods.map { |method| INDENT + method.to_s }.join("\n")
+        @message += "\n" unless @message.empty?
+        @message += "The following methods in '#{overriding_filename}' are overriding the ones in the plugin\n"
+        @message += overriding_methods.map { |method| INDENT + method.to_s }.join("\n")
       end
     end
   end
@@ -60,5 +64,6 @@ end
 if __FILE__ == $0
   omc = OverridingMethodChecker.new
   omc.check
+  puts omc.message
 end
 
