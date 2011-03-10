@@ -36,7 +36,7 @@ class OverridingMethodChecker
       end
       unless overriding_methods.empty?
         @message += "\n" unless @message.empty?
-        @message += "The following methods in '#{overriding_filename}' are overriding the ones in the plugin\n"
+        @message += "The following methods in '#{overriding_filename}' are concealing the corresponding methods in the plugin\n"
         @message += overriding_methods.map { |method| INDENT + method.to_s }.join("\n")
       end
     end
