@@ -1,6 +1,6 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/modifier_or_file_creator'
+require File.dirname(__FILE__) + '/base/modifier_or_file_creator'
 
 
 class ConstantCreator < ModifierOrFileCreator

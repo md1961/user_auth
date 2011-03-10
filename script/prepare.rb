@@ -13,7 +13,7 @@ require CURRENT_DIRNAME + '/config_application_modifier'
 require CURRENT_DIRNAME + '/locale_ja_copier'
 require CURRENT_DIRNAME + '/css_user_auth_copier'
 
-require CURRENT_DIRNAME + '/command_line_argument_parser'
+require CURRENT_DIRNAME + '/base/command_line_argument_parser'
 
 require CURRENT_DIRNAME + '/overriding_check'
 
