@@ -29,6 +29,7 @@ end
 if __FILE__ == $0
   oc = OverridingChecker.new
   oc.check
-  puts oc.message
+  message = oc.message
+  puts message if message && ! message.empty?
 end
 

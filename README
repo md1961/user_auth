@@ -17,7 +17,8 @@ Rails 3 のみに対応
   削除・パスワード変更・パスワードリセット各機能。
 
 - 画面は、ログイン画面、パスワード変更画面、ユーザ一覧・新規追加・編集画面が
-  それぞれ用意される。app/views/sessions, app/views/users で再定義してもよい。
+  それぞれ用意される。
+  app/views/sessions, app/views/users で再定義してもよい。
 
 
 準備
@@ -329,26 +330,29 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 |-- locales
 |   `-- ja.yml
 |-- script
-|   |-- application_controller_modifier.rb
-|   |-- command_line_argument_parser.rb
-|   |-- config_application_modifier.rb
-|   |-- constant_creator.rb
-|   |-- css_user_auth_copier.rb
-|   |-- file_modifier.rb
-|   |-- layout_template_modifier.rb
-|   |-- locale_ja_copier.rb
-|   |-- modifier_or_file_creator.rb
+|   |-- base
+|   |   |-- command_line_argument_parser.rb
+|   |   |-- file_modifier.rb
+|   |   |-- modifier_or_file_creator.rb
+|   |   `-- stream_editor.rb
+|   |-- overriding_check.rb
 |   |-- prepare.rb
-|   |-- routes_adder.rb
-|   |-- session_store_modifier.rb
-|   |-- stream_editor.rb
+|   |-- subscript
+|   |   |-- application_controller_modifier.rb
+|   |   |-- config_application_modifier.rb
+|   |   |-- constant_creator.rb
+|   |   |-- css_user_auth_copier.rb
+|   |   |-- layout_template_modifier.rb
+|   |   |-- locale_ja_copier.rb
+|   |   |-- overriding_file_checker.rb
+|   |   |-- overriding_method_checker.rb
+|   |   |-- routes_adder.rb
+|   |   |-- session_store_modifier.rb
+|   |   |-- user_modifier.rb
+|   |   `-- users_controller_modifier.rb
 |   |-- templates
 |   |   |-- 00_user_auth_kuma_constant.rb
 |   |   `-- ja.yml
-|   |-- test
-|   |   `-- stream_editor_test.rb
-|   |-- user_modifier.rb
-|   `-- users_controller_modifier.rb
 |-- stylesheets
 |   `-- user_auth_kuma.css
 |-- test
@@ -364,6 +368,8 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 |   |-- users_controller_test.rb
 |   `-- users_helper_test.rb
 `-- uninstall.rb
+
+24 directories, 62 files
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
