@@ -1,12 +1,12 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/base/modifier_or_file_creator'
+require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
 
-class CssUserAuthCopier < ModifierOrFileCreator
+class ConstantCreator < ModifierOrFileCreator
 
-  TARGET_FILENAME = "public/stylesheets/user_auth_kuma.css"
-  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../stylesheets/user_auth_kuma.css"
+  TARGET_FILENAME = "config/initializers/00_user_auth_kuma_constant.rb"
+  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../templates/00_user_auth_kuma_constant.rb"
 
   def initialize(argv)
     super(argv, no_modify=true)
@@ -42,8 +42,8 @@ end
 
 
 if __FILE__ == $0
-  cuac = CssUserAuthCopier.new(ARGV)
-  cuac.modify
-  puts cuac.message
+  cc = ConstantCreator.new(ARGV)
+  cc.modify
+  puts cc.message
 end
 

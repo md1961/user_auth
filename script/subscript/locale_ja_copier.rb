@@ -1,12 +1,12 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/base/modifier_or_file_creator'
+require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
 
 class LocaleJaCopier < ModifierOrFileCreator
 
   TARGET_FILENAME = "config/locales/ja.yml"
-  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/templates/ja.yml"
+  TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../templates/ja.yml"
 
   def initialize(argv)
     super(argv, no_modify=true)

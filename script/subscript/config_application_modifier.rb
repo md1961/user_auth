@@ -1,6 +1,6 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/base/file_modifier'
+require File.dirname(__FILE__) + '/../base/file_modifier'
 
 
 class ConfigApplicationModifier < FileModifier

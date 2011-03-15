@@ -1,17 +1,18 @@
 #! /bin/env ruby
 
 CURRENT_DIRNAME = File.dirname(__FILE__)
+SUBSCRIPT_DIRNAME = CURRENT_DIRNAME + '/subscript'
 
-require CURRENT_DIRNAME + '/session_store_modifier'
-require CURRENT_DIRNAME + '/application_controller_modifier'
-require CURRENT_DIRNAME + '/routes_adder'
-require CURRENT_DIRNAME + '/user_modifier'
-require CURRENT_DIRNAME + '/users_controller_modifier'
-require CURRENT_DIRNAME + '/constant_creator'
-require CURRENT_DIRNAME + '/layout_template_modifier'
-require CURRENT_DIRNAME + '/config_application_modifier'
-require CURRENT_DIRNAME + '/locale_ja_copier'
-require CURRENT_DIRNAME + '/css_user_auth_copier'
+require SUBSCRIPT_DIRNAME + '/session_store_modifier'
+require SUBSCRIPT_DIRNAME + '/application_controller_modifier'
+require SUBSCRIPT_DIRNAME + '/routes_adder'
+require SUBSCRIPT_DIRNAME + '/user_modifier'
+require SUBSCRIPT_DIRNAME + '/users_controller_modifier'
+require SUBSCRIPT_DIRNAME + '/constant_creator'
+require SUBSCRIPT_DIRNAME + '/layout_template_modifier'
+require SUBSCRIPT_DIRNAME + '/config_application_modifier'
+require SUBSCRIPT_DIRNAME + '/locale_ja_copier'
+require SUBSCRIPT_DIRNAME + '/css_user_auth_copier'
 
 require CURRENT_DIRNAME + '/base/command_line_argument_parser'
 
@@ -56,6 +57,7 @@ class PrepareUserAuth
         is_modified = modifier.send(action)
         puts INDENT + (is_modified ? "Done." : "NOTHING to be done")
       rescue => e
+        puts "#{modifyingClass} failed ..."
         puts INDENT + "Failed due to #{e.message}"
       end
     end
