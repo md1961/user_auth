@@ -4,7 +4,7 @@
 class OverridingFileChecker
   attr_reader :message
 
-  PLUGIN_DIR = File.dirname(__FILE__) + '/..'
+  PLUGIN_DIR = File.dirname(__FILE__) + '/../..'
 
   VIEW_DIR = "app/views"
   VIEW_SUBDIRS = %w(sessions users)

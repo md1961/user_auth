@@ -4,7 +4,7 @@
 class OverridingMethodChecker
   attr_reader :message
 
-  PLUGIN_LIB_DIR = File.dirname(__FILE__) + '/../lib'
+  PLUGIN_LIB_DIR = File.dirname(__FILE__) + '/../../lib'
 
   FILENAMES_WITH_DIR_TO_CHECK = [
     %w(user.rb             app/models     ),

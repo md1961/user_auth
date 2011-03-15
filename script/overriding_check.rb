@@ -1,7 +1,7 @@
 #! /bin/env ruby
 
-require File.dirname(__FILE__) + '/overriding_file_checker'
-require File.dirname(__FILE__) + '/overriding_method_checker'
+require File.dirname(__FILE__) + '/subscript/overriding_file_checker'
+require File.dirname(__FILE__) + '/subscript/overriding_method_checker'
 
 
 class OverridingChecker
