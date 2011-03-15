@@ -3,7 +3,7 @@
 require 'test/unit'
 require 'tempfile'
 
-require File.dirname(__FILE__) + '/../stream_editor'
+require File.dirname(__FILE__) + '/../base/stream_editor'
 
 
 class StreamEditorTest < Test::Unit::TestCase
