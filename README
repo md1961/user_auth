@@ -255,6 +255,7 @@ Rails 3 のみに対応
 使用方法
 ========
 
+(1)
 アクセス制限をかけたいコントローラに、例えば、下記のような記述をする。
 
   class LimitedAccessController < ApplicationController
@@ -272,22 +273,26 @@ administrator? が true を返すユーザのみに制限がかかる。
 writer? および administrator? はそれぞれ false を返す。また、クラス User で各々
 再定義して動作をオーバーライトしてもよい。
 
+(2)
 認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
 しないまま 経過すると、自動的にログアウトされる。
 
+(3)
 下記のパスを使用すればユーザ管理画面に遷移する。
 
   change_password_user_path : 現在のログインユーザのパスワード変更画面
   users_path                : ユーザ一覧画面（ユーザの新規作成・編集・削除が行える）
 
-また、下記のヘルパー・メソッドが使えるようになっている。
+(4)
+下記のヘルパー・メソッドが使えるようになっている。
 
   logged_in?() -> bool
     ログインしているか評価する。ログインしていれば true、 していなければ false を返す
   current_user() -> User | nil
     現在のログインユーザを返す。ログインしていなければ nil を返す
 
-定数管理モジュール Constant には以下のモジュール関数を持つ。
+(5)
+定数管理モジュール Constant は以下のモジュール関数を持つ。
 
   has_key?(key) -> bool 
     定数名 key を持つ定数が存在するか評価する
@@ -297,6 +302,11 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 デフォルトでは lib/constant.yml に YAML 形式で定数を定義する。
 定義するファイルは config/initializers/00_user_auth_kuma_constant.rb の
 CONSTANT_YAML_FILENAME を編集することにより変更できる。
+
+(6)
+Constant.get(:login_enabled) が false を返すか、Constant.get(:login_disabled) が
+true を返すように設定された場合は、ログイン画面を表示する代わりにログインできない旨を
+表示する（app/views/sessions/login_disabled.html.erb を表示する）。
 
 
 ファイル
@@ -311,6 +321,7 @@ CONSTANT_YAML_FILENAME を編集することにより変更できる。
 |-- app
 |   `-- views
 |       |-- sessions
+|       |   |-- login_disabled.html.erb
 |       |   `-- new.html.erb
 |       |-- system
 |       |   `-- _error_messages_for.html.erb
@@ -368,6 +379,8 @@ CONSTANT_YAML_FILENAME を編集することにより変更できる。
 |   |-- templates
 |   |   |-- 00_user_auth_kuma_constant.rb
 |   |   `-- ja.yml
+|   `-- test
+|       `-- stream_editor_test.rb
 |-- stylesheets
 |   `-- user_auth_kuma.css
 |-- test
@@ -383,8 +396,6 @@ CONSTANT_YAML_FILENAME を編集することにより変更できる。
 |   |-- users_controller_test.rb
 |   `-- users_helper_test.rb
 `-- uninstall.rb
-
-24 directories, 62 files
 
 
 Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license

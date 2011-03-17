@@ -11,6 +11,7 @@ ja:
     page_title:
       sessions:
         new: "ログインしてください"
+        login_disabled: "メンテナンス中によりログインはできません"
       users:
         index: "ユーザの一覧"
         new: "新規ユーザの作成"
