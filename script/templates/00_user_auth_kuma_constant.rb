@@ -24,3 +24,36 @@ module UserAuthKuma
     CANCEL_PATH_FROM_CHANGE_PASSWORD = nil
   end
 end
+
+# module Constant の定数を保持する YAMLファイルのファイル名
+CONSTANT_YAML_FILENAME = "#{Rails.root}/lib/constant.yml"
+
+
+module Constant
+
+  module_function
+
+  # 特定の定数名を持つ定数が存在するかを評価する
+  # _key_ :: 定数名。Symbol、または文字列
+  # 返り値 :: 定数が存在すれば true
+  def has_key?(key)
+    return read_yaml.has_key?(key.to_s)
+  end
+
+  # 定数を取得する
+  # _key_ :: 定数名。Symbol、または文字列
+  # 返り値 :: 定数
+  def get(key)
+    yaml = read_yaml
+    raise KeyError, "No entry for key #{key.inspect}" unless yaml.has_key?(key.to_s)
+
+    return yaml[key.to_s]
+  end
+
+  private
+
+    def self.read_yaml
+      return YAML.load_file(CONSTANT_YAML_FILENAME)
+    end
+end
+

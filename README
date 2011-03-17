@@ -20,6 +20,8 @@ Rails 3 のみに対応
   それぞれ用意される。
   app/views/sessions, app/views/users で再定義してもよい。
 
+- サーバを再起動することなく変更した値が反映される定数管理モジュール
+  Constant が定義される。
 
 準備
 ====
@@ -280,8 +282,21 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 
 また、下記のヘルパー・メソッドが使えるようになっている。
 
-  logged_in?()   : ログインしているか評価する。ログインしていれば true、していなければ false を返す
-  current_user() : 現在のログインユーザを返す。ログインしていなければ nil を返す
+  logged_in?() -> bool
+    ログインしているか評価する。ログインしていれば true、 していなければ false を返す
+  current_user() -> User | nil
+    現在のログインユーザを返す。ログインしていなければ nil を返す
+
+定数管理モジュール Constant には以下のモジュール関数を持つ。
+
+  has_key?(key) -> bool 
+    定数名 key を持つ定数が存在するか評価する
+  get(key) -> Object
+    定数名 key を持つ定数を返す
+
+デフォルトでは lib/constant.yml に YAML 形式で定数を定義する。
+定義するファイルは config/initializers/00_user_auth_kuma_constant.rb の
+CONSTANT_YAML_FILENAME を編集することにより変更できる。
 
 
 ファイル
