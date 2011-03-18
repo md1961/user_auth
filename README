@@ -200,26 +200,12 @@ Rails 3 のみに対応
 
       module UserAuthKuma
         module Constant
-          SESSION_TIMEOUT_IN_MIN =  5
-
-          MIN_LENGTH_OF_NAME     =  5
-          MAX_LENGTH_OF_NAME     = 50
-          MIN_LENGTH_OF_PASSWORD =  4
-          MAX_LENGTH_OF_PASSWORD = 20
-
-          module TemporaryPassword
-            LENGTH     = 12
-            NUM_DIGITS =  2
-            NUM_SIGNS  =  1
-            NUM_UPPERS =  2
-            NUM_LOWERS = LENGTH - NUM_DIGITS - NUM_SIGNS - NUM_UPPERS
-
-            SIGNS = %w(! # $ % & + - * / = @ ?)
-          end
-
-          CANCEL_PATH_FROM_USERS_INDEX     = nil
-          CANCEL_PATH_FROM_CHANGE_PASSWORD = nil
+          ...（定数群）...
         end
+      end
+
+      module Constant
+        ...（サーバ起動中に変更可能な定数を扱うメソッド群）...
       end
 
   (f. app/views/layouts/application.html.erb にリンクなどを追加する)

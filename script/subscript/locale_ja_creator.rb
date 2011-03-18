@@ -3,7 +3,7 @@
 require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
 
-class LocaleJaCopier < ModifierOrFileCreator
+class LocaleJaCreator < ModifierOrFileCreator
 
   TARGET_FILENAME = "config/locales/ja.yml"
   TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../templates/ja.yml"
@@ -42,7 +42,7 @@ end
 
 
 if __FILE__ == $0
-  ljc = LocaleJaCopier.new(ARGV)
+  ljc = LocaleJaCreator.new(ARGV)
   ljc.modify
   puts ljc.message
 end

@@ -11,8 +11,8 @@ require SUBSCRIPT_DIRNAME + '/users_controller_modifier'
 require SUBSCRIPT_DIRNAME + '/constant_creator'
 require SUBSCRIPT_DIRNAME + '/layout_template_modifier'
 require SUBSCRIPT_DIRNAME + '/config_application_modifier'
-require SUBSCRIPT_DIRNAME + '/locale_ja_copier'
-require SUBSCRIPT_DIRNAME + '/css_user_auth_copier'
+require SUBSCRIPT_DIRNAME + '/locale_ja_creator'
+require SUBSCRIPT_DIRNAME + '/css_user_auth_creator'
 
 require CURRENT_DIRNAME + '/base/command_line_argument_parser'
 
@@ -30,8 +30,8 @@ class PrepareUserAuth
     [ConstantCreator              , :modify],
     [LayoutTemplateModifier       , :modify],
     [ConfigApplicationModifier    , :modify],
-    [LocaleJaCopier               , :modify],
-    [CssUserAuthCopier            , :modify],
+    [LocaleJaCreator              , :modify],
+    [CssUserAuthCreator           , :modify],
   ]
 
   OPTIONS_NOBACKUP = CommandLineArgumentParser::OPTIONS_NOBACKUP
