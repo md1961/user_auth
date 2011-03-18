@@ -13,9 +13,14 @@ class ModifierOrFileCreator < StreamEditor
     dirname, creates_backup = parse_argv(argv)
     @no_modify = no_modify
 
+    target_filename_full = dirname + '/' + target_filename
+
+    dirname_full = File.dirname(target_filename_full)
+    Dir.mkdir(dirname_full) unless File.exist?(dirname_full)
+
     @no_target_found = false
     begin
-      super(dirname + '/' + target_filename, creates_backup)
+      super(target_filename_full, creates_backup)
     rescue StreamEditor::FileNotFoundError => e
       @no_target_found = true
     end
