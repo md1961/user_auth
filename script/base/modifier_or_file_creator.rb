@@ -13,11 +13,11 @@ class ModifierOrFileCreator < StreamEditor
     dirname, creates_backup = parse_argv(argv)
     @no_modify = no_modify
 
-    @no_target = false
+    @no_target_found = false
     begin
       super(dirname + '/' + target_filename, creates_backup)
     rescue StreamEditor::FileNotFoundError => e
-      @no_target = true
+      @no_target_found = true
     end
 
     @message = "Nothing done yet"
@@ -31,7 +31,7 @@ class ModifierOrFileCreator < StreamEditor
   private
 
     def modify
-      if @no_target
+      if @no_target_found
         is_modified = true
         begin
           File.open(filename_to_edit, 'w') do |f|
