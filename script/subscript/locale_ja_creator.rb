@@ -29,14 +29,7 @@ class LocaleJaCreator < ModifierOrFileCreator
     end
 
     def make_template_file_contents
-      lines = Array.new
-      File.open(TEMPLATE_FILENAME, 'r') do |f|
-        f.each do |line|
-          lines << line
-        end
-      end
-
-      return lines
+      return File.open(TEMPLATE_FILENAME, 'r').readlines
     end
 end
 

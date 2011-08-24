@@ -1,4 +1,5 @@
 #! /bin/env ruby
+# vi: set fileencoding=utf-8 :
 
 require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
@@ -22,7 +23,7 @@ class LoginDisabledTemplateCreator < ModifierOrFileCreator
     end
 
     def template_file_contents
-      return [""]
+      return ["<p>ログイン禁止時のメッセージ</p>"]
     end
 end
 
