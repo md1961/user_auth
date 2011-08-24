@@ -3,7 +3,7 @@
 require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
 
-class ConstantCreator < ModifierOrFileCreator
+class UserAuthKumaConstantCreator < ModifierOrFileCreator
 
   TARGET_FILENAME = "config/initializers/00_user_auth_kuma_constant.rb"
   TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../templates/00_user_auth_kuma_constant.rb"
@@ -35,8 +35,8 @@ end
 
 
 if __FILE__ == $0
-  cc = ConstantCreator.new(ARGV)
-  cc.modify
-  puts cc.message
+  uakcc = UserAuthKumaConstantCreator.new(ARGV)
+  uakcc.modify
+  puts uakcc.message
 end
 

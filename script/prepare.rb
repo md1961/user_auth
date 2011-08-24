@@ -8,7 +8,7 @@ require SUBSCRIPT_DIRNAME + '/application_controller_modifier'
 require SUBSCRIPT_DIRNAME + '/routes_adder'
 require SUBSCRIPT_DIRNAME + '/user_modifier'
 require SUBSCRIPT_DIRNAME + '/users_controller_modifier'
-require SUBSCRIPT_DIRNAME + '/constant_creator'
+require SUBSCRIPT_DIRNAME + '/user_auth_kuma_constant_creator'
 require SUBSCRIPT_DIRNAME + '/layout_template_modifier'
 require SUBSCRIPT_DIRNAME + '/config_application_modifier'
 require SUBSCRIPT_DIRNAME + '/locale_ja_creator'
@@ -28,7 +28,7 @@ class PrepareUserAuth
     [RoutesAdder                  , :modify],
     [UserModifier                 , :modify],
     [UsersControllerModifier      , :modify],
-    [ConstantCreator              , :modify],
+    [UserAuthKumaConstantCreator  , :modify],
     [LayoutTemplateModifier       , :modify],
     [ConfigApplicationModifier    , :modify],
     [LocaleJaCreator              , :modify],
