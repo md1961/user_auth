@@ -1,0 +1,10 @@
+# 重要な定数（システムの挙動に影響を及ぼすなと）
+login_disabled : false
+
+# 重要度が中程度の定数（見栄えが悪くなる、入出力に支障が出るなど）
+application_name : アプリケーション名
+
+# 重要度が低い定数（補助的な表示文字列など）
+year_copyright_since : 2011
+format_copyright : Copyright (c) %s  Japex, co., ltd.  All rights reserved.
+
