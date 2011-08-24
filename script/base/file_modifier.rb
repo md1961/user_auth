@@ -11,7 +11,9 @@ class FileModifier < StreamEditor
 
   def initialize(argv)
     dirname, creates_backup = parse_argv(argv)
-    super(dirname + '/' + target_filename, creates_backup)
+    target_filename_full = dirname + '/' + target_filename
+
+    super(target_filename_full, creates_backup)
 
     @message = "Nothing done yet"
   end
@@ -23,7 +25,7 @@ class FileModifier < StreamEditor
 
   def modify
     is_modified = edit
-    @message = "'#{filename_to_edit}' was #{is_modified ? '' : 'NOT '}modified"
+    @message = "#{is_modified ? '' : 'NOT '}modified"
     return is_modified
   end
 

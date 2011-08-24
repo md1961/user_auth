@@ -48,19 +48,32 @@ class PrepareUserAuth
     exit_with_message("Cannot find Rails root directory") unless @rails_root
   end
 
-  INDENT = ' ' * 4
+  INDEX_EXECUTOR  = "Executor: "
+  INDEX_TARGET    = "Target:   "
+  INDEX_RESULT    = "Result:   "
+  INDENT          = ' ' * 4
+  SEPARATING_LINE = '-' * 8
 
   def prepare
+    is_first = true
     MODIFIERS.each do |modifyingClass, action|
       begin
+        if is_first
+          is_first = false
+        else
+          puts SEPARATING_LINE
+        end
+
         argv = @argv + [@rails_root]
         modifier = modifyingClass.new(argv)
         puts message_before_action(modifier)
+
         is_modified = modifier.send(action)
-        puts INDENT + (is_modified ? "Done." : "NOTHING to be done")
+        puts INDEX_RESULT + (is_modified ? modifier.message : "NOTHING to be done")
       rescue => e
-        puts "#{modifyingClass} failed ..."
-        puts INDENT + "Failed due to #{e.message}"
+        raise e
+
+        puts INDEX_RESULT + "Failed due to #{e.message}"
       end
     end
 
@@ -82,7 +95,8 @@ class PrepareUserAuth
 
     def message_before_action(modifier)
       filename = remove_dirname(modifier.filename_to_edit, @rails_root)
-      return "'#{filename}' is being modified by #{modifier.class} ..."
+      return INDEX_EXECUTOR + "#{modifier.class}\n" \
+           + INDEX_TARGET   + "#{filename}"
     end
 
     def remove_dirname(filename, dirname)

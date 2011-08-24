@@ -4,33 +4,22 @@ require File.dirname(__FILE__) + '/stream_editor'
 require File.dirname(__FILE__) + '/command_line_argument_parser'
 
 
-class ModifierOrFileCreator < StreamEditor
-  include CommandLineArgumentParser
-
-  attr_reader :message
+class ModifierOrFileCreator < FileModifier
 
   def initialize(argv, no_modify=false)
-    dirname, creates_backup = parse_argv(argv)
     @no_modify = no_modify
 
+    dirname, __dump = parse_argv(argv.dup)
     target_filename_full = dirname + '/' + target_filename
-
     dirname_full = File.dirname(target_filename_full)
     Dir.mkdir(dirname_full) unless File.exist?(dirname_full)
 
     @no_target_found = false
     begin
-      super(target_filename_full, creates_backup)
+      super(argv)
     rescue StreamEditor::FileNotFoundError => e
       @no_target_found = true
     end
-
-    @message = "Nothing done yet"
-  end
-
-  # Return a relative path to a directory to be given via argument argv of initialize()
-  def target_filename
-    raise NotImplementedError, "Must be overridden by a subclass"
   end
 
   private
@@ -44,24 +33,19 @@ class ModifierOrFileCreator < StreamEditor
               f.puts line.chomp
             end
           end
-          @message = "'#{filename_to_edit}' was creted"
+          @message = "created"
         rescue => e
           is_modified = false
           @message = e.message
         end
       elsif @no_modify
         is_modified = false
-        @message = "Nothing done because '#{filename_to_edit}' already exists"
+        @message = "Nothing done because the target file already exists"
       else
         is_modified = edit
-        @message = "'#{filename_to_edit}' was #{is_modified ? '' : 'NOT '}modified"
+        @message = "#{is_modified ? '' : 'NOT '}modified"
       end
       return is_modified
-    end
-
-    def edit
-      is_edited = super
-      return is_edited
     end
 end
 
