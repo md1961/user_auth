@@ -1,5 +1,6 @@
 # モデル Session の処理を行うコントローラ
 class SessionsController < ApplicationController
+  skip_filter :authenticate
 
   DEFAULT_LOGIN_ALLOWANCE = {
     :login_enabled  => true ,
