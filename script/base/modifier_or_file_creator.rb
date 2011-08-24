@@ -1,5 +1,6 @@
 #! /bin/env ruby
 
+require File.dirname(__FILE__) + '/file_modifier'
 require File.dirname(__FILE__) + '/stream_editor'
 require File.dirname(__FILE__) + '/command_line_argument_parser'
 
