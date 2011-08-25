@@ -5,7 +5,7 @@
 <p>
   <%= link_to t("helpers.link.user.new"), new_user_path %>
   &nbsp;&nbsp;|&nbsp;&nbsp;
-  <%= link_to t("helpers.link.user.cancel"), path_from_constant || root_path %>
+  <%= link_to t("helpers.link.user.cancel"), path_from_constant || browse_back_by_javascript %>
 </p>
 
 <table id="table_users" class="table_base">
@@ -40,5 +40,5 @@
 </table>
 
 <p>
-  <%= link_to t("helpers.link.user.cancel"), path_from_constant || root_path %>
+  <%= link_to t("helpers.link.user.cancel"), path_from_constant || browse_back_by_javascript %>
 </p>

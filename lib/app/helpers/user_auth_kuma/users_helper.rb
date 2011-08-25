@@ -40,6 +40,10 @@ module UsersHelper
 
     return nil
   end
+
+  def browse_back_by_javascript
+    return 'javascript:history.go(-1);'
+  end
 end
 
 end
