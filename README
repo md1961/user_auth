@@ -302,6 +302,18 @@ true を返すように設定された場合は、ログイン画面を表示す
 app/views/sessions/_login_disabled.html.erb に記述する。
 
 
+トラブルシューティング
+======================
+
+- app/views/layouts/application.html.erb の中で ApplicationHelper のメソッドを用いる、
+  などを行った場合、このプラグインのビューから参照できない場合がある。その場合は
+  下記のように ApplicationController に helper :all を追加する。
+
+    class ApplicationController < ActionController::Base
+      helper :all
+      ...
+
+
 ファイル
 ========
 
