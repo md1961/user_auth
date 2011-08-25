@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
 
   # Session のデータをクリアし、ログイン画面に戻る
   def destroy
-    reset_session
+    reset_session_safely
     redirect_to root_path, :notice => t("helpers.notice.session.logged_out")
   end
 end

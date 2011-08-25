@@ -49,7 +49,7 @@ class ActionController::Base
     # ログイン画面にリダイレクトして false を返す
     # 返り値 :: 常に false
     def access_denied
-      reset_session
+      reset_session_safely
       redirect_to login_path and return false
     end
 
@@ -58,13 +58,17 @@ class ActionController::Base
       timeout = UserAuthKuma::Constant::SESSION_TIMEOUT_IN_MIN
       datetime_checked = session[KEY_FOR_DATETIME_TIMEOUT_CHECKED]
       if datetime_checked && datetime_checked < timeout.minutes.ago 
-        reset_session
+        reset_session_safely
 
         flash[:notice] = t("helpers.notice.session.timeout") % {timeout: timeout}
         logger.debug "ActionController::Base#check_timeout(): Session had been timed out"
       else
         session[KEY_FOR_DATETIME_TIMEOUT_CHECKED] = Time.now
       end
+    end
+
+    def reset_session_safely
+      reset_session if session.respond_to?(:destroy)
     end
 end
 
