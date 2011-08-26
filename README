@@ -23,6 +23,7 @@ Rails 3 のみに対応
 - サーバを再起動することなく変更した値が反映される定数管理モジュール
   Constant が定義される。
 
+
 準備
 ====
 
@@ -302,6 +303,22 @@ true を返すように設定された場合は、ログイン画面を表示す
 app/views/sessions/_login_disabled.html.erb に記述する。
 
 
+スクリプトの一覧
+================
+
+- script/overriding_check.rb
+    機能： プラグインのファイルやメソッドが Rails プロジェクトのファイルやメソッドにより
+           オーバーライドされているかどうかを調べる
+    使用法： ./vendor/plugins/user_auth/script/overriding_check.rb
+    コマンドラインオプション： なし
+    
+- script/prepare.rb
+    機能： プラグインの仕様に必要なファイル追加や修正を行う
+    使用法： ./vendor/plugins/user_auth/script/prepare.rb
+    コマンドラインオプション：
+             -n|--nobackup : ファイルの内容を変更したときのバックアップファイルを作成しない
+
+
 トラブルシューティング
 ======================
 
@@ -317,7 +334,7 @@ app/views/sessions/_login_disabled.html.erb に記述する。
 ファイル
 ========
 
-インストールされる主なファイルは以下のとおり。
+インストールされるファイルは以下のとおり。
 
 .
 |-- MIT-LICENSE
@@ -330,6 +347,11 @@ app/views/sessions/_login_disabled.html.erb に記述する。
 |       |   `-- new.html.erb
 |       |-- system
 |       |   `-- _error_messages_for.html.erb
+|       |-- test_target
+|       |   |-- change_password.html.erb
+|       |   |-- edit.html.erb
+|       |   |-- index.html.erb
+|       |   `-- new.html.erb
 |       `-- users
 |           |-- _form.html.erb
 |           |-- change_password.html.erb
@@ -371,18 +393,21 @@ app/views/sessions/_login_disabled.html.erb に記述する。
 |   |-- subscript
 |   |   |-- application_controller_modifier.rb
 |   |   |-- config_application_modifier.rb
-|   |   |-- constant_creator.rb
-|   |   |-- css_user_auth_copier.rb
+|   |   |-- constant_yml_creator.rb
+|   |   |-- css_user_auth_creator.rb
 |   |   |-- layout_template_modifier.rb
-|   |   |-- locale_ja_copier.rb
+|   |   |-- locale_ja_creator.rb
+|   |   |-- login_disabled_template_creator.rb
 |   |   |-- overriding_file_checker.rb
 |   |   |-- overriding_method_checker.rb
 |   |   |-- routes_adder.rb
 |   |   |-- session_store_modifier.rb
+|   |   |-- user_auth_kuma_constant_creator.rb
 |   |   |-- user_modifier.rb
 |   |   `-- users_controller_modifier.rb
 |   |-- templates
 |   |   |-- 00_user_auth_kuma_constant.rb
+|   |   |-- constant.yml
 |   |   `-- ja.yml
 |   `-- test
 |       `-- stream_editor_test.rb
@@ -390,6 +415,7 @@ app/views/sessions/_login_disabled.html.erb に記述する。
 |   `-- user_auth_kuma.css
 |-- test
 |   |-- action_controller_override_test.rb
+|   |-- constant_test.rb
 |   |-- fixtures
 |   |   `-- users.yml
 |   |-- sessions_controller_test.rb
