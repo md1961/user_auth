@@ -26,10 +26,17 @@ class OverridingChecker
 end
 
 
+MESSAGE_WHEN_NO_OVERRIDING = "No overridden files/methods found."
+
 if __FILE__ == $0
   oc = OverridingChecker.new
   oc.check
   message = oc.message
-  puts message if message && ! message.empty?
+
+  if message && ! message.empty?
+    puts message
+  else
+    puts MESSAGE_WHEN_NO_OVERRIDING
+  end
 end
 
