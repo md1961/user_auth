@@ -49,7 +49,17 @@ Rails 3 のみに対応
 
   マイグレーションを使うなら以下のようになる。
 
-    rails generate model user name:string hashed_password:string
+    $ rails generate model user name:string hashed_password:string
+
+  「2-2. マイグレーション・ファイルの例」をそのまま使う場合は
+
+    $ rails generate model user
+
+  でマイグレーション・ファイルを生成して、ファイルの中身を 2-2. に入れ替える。
+
+  マイグレーション・ファイルができたら、下記のコマンドで DBテーブルを生成する。
+
+    $ rake db:migrate
 
 2-1. 書き込み権限、管理者権限を制御したいときは、上記に加えて、それぞれ下記を
      用意する
