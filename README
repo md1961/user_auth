@@ -278,7 +278,16 @@ Rails 3 のみに対応
 ========
 
 (1)
-アクセス制限をかけたいコントローラに、例えば、下記のような記述をする。
+ApplicationController に下記のように before_filter :authenticate を追加する。
+
+  class ApplicationController < ActionController::Base
+    before_filter :authenticate
+
+（ログイン認証を司る SessionsController は skip_filter :authenticate としているので、
+  認証なしでアクセスできるようになっている。）
+
+個々のコントローラに設定したい場合は、アクセス制限をかけたいコントローラに、 例えば、
+下記のような記述をする。
 
   class LimitedAccessController < ApplicationController
     before_filter :authenticate
