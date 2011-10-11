@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../base/modifier_or_file_creator'
 
 class CssUserAuthCreator < ModifierOrFileCreator
 
-  TARGET_FILENAME = "public/stylesheets/user_auth_kuma.css"
+  TARGET_FILENAME = "app/assets/stylesheets/user_auth_kuma.css"
   TEMPLATE_FILENAME = File.dirname(__FILE__) + "/../../stylesheets/user_auth_kuma.css"
 
   def initialize(argv)
