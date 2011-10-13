@@ -23,7 +23,7 @@ class LoginDisabledTemplateCreator < ModifierOrFileCreator
     end
 
     def template_file_contents
-      return ["<p>ログイン禁止時のメッセージ</p>"]
+      return ["<h2>ログイン禁止時のメッセージ</h2>"]
     end
 end
 
