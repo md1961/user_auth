@@ -58,7 +58,7 @@ ja:
 
     alert:
       user:
-        old_password_not_match: "現在のパスワードが違います"
+        old_password_not_match: "が違います"
         password_should_be_entered: "パスワードを入力してください"
 
   activerecord:
@@ -71,4 +71,6 @@ ja:
         name: "ユーザ名"
         is_writer: "書き込み権限"
         is_administrator: "管理者権限"
+        password: "パスワード"
+        old_password: "現在のパスワード"
 
