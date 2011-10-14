@@ -7,10 +7,9 @@ class OverridingFileChecker
   PLUGIN_DIR = File.dirname(__FILE__) + '/../..'
 
   VIEW_DIR = "app/views"
-  VIEW_SUBDIRS = %w(sessions users)
+  VIEW_SUBDIRS = %w(system sessions users)
 
   def initialize
-    #raise IOError, "Cannot find directory '#{target_dir}'" unless File.directory?(target_dir)
     @message = nil
   end
 
