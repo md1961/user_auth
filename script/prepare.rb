@@ -15,6 +15,7 @@ require SUBSCRIPT_DIRNAME + '/config_application_modifier'
 require SUBSCRIPT_DIRNAME + '/locale_ja_creator'
 require SUBSCRIPT_DIRNAME + '/css_user_auth_creator'
 require SUBSCRIPT_DIRNAME + '/login_disabled_template_creator'
+require SUBSCRIPT_DIRNAME + '/login_notice_template_creator'
 
 require CURRENT_DIRNAME + '/base/command_line_argument_parser'
 
@@ -36,6 +37,7 @@ class PrepareUserAuth
     [LocaleJaCreator              , :modify],
     [CssUserAuthCreator           , :modify],
     [LoginDisabledTemplateCreator , :modify],
+    [LoginNoticeTemplateCreator   , :modify],
   ]
 
   OPTIONS_NOBACKUP = CommandLineArgumentParser::OPTIONS_NOBACKUP

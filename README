@@ -271,7 +271,9 @@ Rails 3 のみに対応
     フォームのエラー表示用の CSS ファイル user_auth.css を public/stylesheets に
     コピーする。
 
-  (i. 空のテンプレート・ビュー app/views/sessions/_login_disabled.html.erb を用意する)
+  (i. テンプレート・ビュー app/views/sessions/_login_disabled.html.erb を用意する)
+
+  (j. 空のテンプレート・ビュー app/views/sessions/_login_notice.html.erb を用意する)
 
 
 使用方法
@@ -337,9 +339,13 @@ CONSTANT_YAML_FILENAME を編集することにより変更できる。
 (6)
 Constant.get(:login_enabled) が false を返すか、Constant.get(:login_disabled) が
 true を返すように設定された場合は、ログイン画面を表示する代わりにログインできない旨を
-表示する（プラグインの app/views/sessions/login_disabled.html.erb を表示する）。
+表示する（プラグインの app/views/sessions/_login_disabled.html.erb を表示する）。
 本文は、プラグインではなくプロジェクトのほうの
 app/views/sessions/_login_disabled.html.erb に記述する。
+
+(7)
+ログイン画面に追加表示したいものがあれば app/views/sessions/_login_notice.html.erb に
+記述する。
 
 
 スクリプトの一覧
