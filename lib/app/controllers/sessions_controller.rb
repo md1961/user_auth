@@ -39,10 +39,7 @@ class SessionsController < ApplicationController
       unless user
         flash.now[:alert] = t("helpers.notice.session.username_required")
       else
-        temporary_password = user.reset_password
-        if user.save
-          UserAuthMailer.notify_password_reset(user, temporary_password).deliver
-
+        if reset_user_password_and_notify(user)
           flash.now[:alert] = t("helpers.notice.session.password_reset_and_mail_sent")
         else
           flash.now[:alert] = t("helpers.notice.session.password_reset_failed")
@@ -72,6 +69,13 @@ class SessionsController < ApplicationController
   end
 
   private
+
+    def reset_user_password_and_notify(user)
+      temporary_password = user.reset_password
+      is_success = user.save
+      UserAuthMailer.notify_password_reset(user, temporary_password).deliver if is_success
+      return is_success
+    end
 
     def timestamp(timestamp=nil)
       timestamp = Time.now unless timestamp
