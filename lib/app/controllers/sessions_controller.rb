@@ -73,7 +73,10 @@ class SessionsController < ApplicationController
     def reset_user_password_and_notify(user)
       temporary_password = user.reset_password
       is_success = user.save
-      UserAuthMailer.notify_password_reset(user, temporary_password).deliver if is_success
+      if is_success
+        UserAuthMailer.notify_password_reset(user, temporary_password).deliver
+        logger.info("The password of user '#{user.name}'(#{user.real_name}) was reset to '#{temporary_password}'.")
+      end
       return is_success
     end
 

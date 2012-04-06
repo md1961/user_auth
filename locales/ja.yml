@@ -90,3 +90,6 @@ ja:
         password: "パスワード"
         old_password: "現在のパスワード"
 
+  mail:
+    reset_password:
+      subject: "SKELTON のログイン・パスワード再発行"
