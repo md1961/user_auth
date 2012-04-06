@@ -15,6 +15,18 @@
       <td><%= f.label :password_confirmation %></td>
       <td><%= f.password_field :password_confirmation %></td>
     </tr>
+    <tr class="field">
+      <td><%= f.label :real_name %></td>
+      <td><%= f.text_field :real_name %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :email %></td>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :time_limit %></td>
+      <td><%= f.text_field :time_limit %></td>
+    </tr>
 
     <% if @user.respond_to?(:is_writer) -%>
       <tr class="field">

@@ -20,7 +20,7 @@ module UsersHelper
     case attr_name.to_sym
     when :id
       return 'right'
-    when :name
+    when :name, :real_name, :email, :time_limit
       return 'left'
     end
 

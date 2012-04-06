@@ -3,7 +3,7 @@ module UserAuthKuma
 # モデル User の処理を行うコントローラ
 class UsersController < ApplicationController
 
-  ATTRIBUTE_NAMES_TO_LIST          = %w(id name).freeze
+  ATTRIBUTE_NAMES_TO_LIST          = %w(id name real_name email time_limit).freeze
   OPTIONAL_ATTRIBUTE_NAMES_TO_LIST = %w(is_writer is_administrator).freeze
 
   # ユーザの一覧を出力する

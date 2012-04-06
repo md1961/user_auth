@@ -46,10 +46,9 @@ Rails 3 のみに対応
    -------------------------------------------------------------
     name              string    ユーザ名
     hashed_password   string    ハッシュ値に変換されたパスワード
-
-  マイグレーションを使うなら以下のようになる。
-
-    $ rails generate model user name:string hashed_password:string
+    real_name         string    実名（表示に使用）
+    email             string    Eメール・アドレス
+    time_limit        datetime  パスワードの有効期限
 
   「2-2. マイグレーション・ファイルの例」をそのまま使う場合は
 
@@ -83,10 +82,13 @@ Rails 3 のみに対応
     class CreateUsers < ActiveRecord::Migration
       def self.up
         create_table :users do |t|
-          t.string  :name            , :null => false
-          t.string  :hashed_password
-          t.boolean :is_writer       , :null => false, :default => false
-          t.boolean :is_administrator, :null => false, :default => false
+          t.string   :name            , :null => false
+          t.string   :hashed_password
+          t.string   :real_name
+          t.string   :email
+          t.datetime :time_limit
+          t.boolean  :is_writer       , :null => false, :default => false
+          t.boolean  :is_administrator, :null => false, :default => false
 
           t.timestamps
         end

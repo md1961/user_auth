@@ -28,12 +28,16 @@ ja:
         password_confirmation: "もう一度パスワード"
         old_password: "現在のパスワード"
         new_password: "新しいパスワード"
+        real_name: "実名"
+        email: "Eメール・アドレス"
+        time_limit: "パスワードの有効期限"
         is_writer: "書き込み権限"
         is_administrator: "管理者権限"
 
     link:
       logout: "ログアウト"
       user:
+        back: "戻る"
         cancel: "キャンセル"
         index: "ユーザの一覧"
         new: "新規ユーザの作成"
@@ -69,6 +73,9 @@ ja:
       user:
         id: "ID"
         name: "ユーザ名"
+        real_name: "実名"
+        email: "Eメール・アドレス"
+        time_limit: "パスワードの有効期限"
         is_writer: "書き込み権限"
         is_administrator: "管理者権限"
         password: "パスワード"
