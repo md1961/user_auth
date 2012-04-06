@@ -5,6 +5,7 @@ ja:
     submit:
       session:
         login: "ログイン"
+        reset_password: "パスワードの再発行"
       user:
         change: "変更"
 
@@ -17,6 +18,11 @@ ja:
         new: "新規ユーザの作成"
         edit: "ユーザ「%{name}」の編集"
         change_password: "ユーザ「%{name}」のパスワードを変更します"
+
+    symbol:
+      user:
+        owns: "あり"
+        not_own: "なし"
 
     label:
       session:
@@ -59,6 +65,9 @@ ja:
         logged_out: "ログアウトしました"
         invalid_login: "ユーザ名／パスワードの組み合わせが正しくありません"
         timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
+        username_required: "パスワードを再発行するには、ユーザ名を入力してください"
+
+        reset_password_not_implemented: "「パスワードの再発行」機能はまだ未完成です"
 
     alert:
       user:

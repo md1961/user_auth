@@ -34,7 +34,16 @@ class SessionsController < ApplicationController
   # <em>params[:name]</em> : ユーザ名<br />
   # <em>params[:password]</em> : パスワード
   def create
-    if user = User.authenticate(params[:name], params[:password])
+    if params[:reset_password]
+      user = User.find_by_name(params[:name])
+      unless user
+        flash.now[:alert] = t("helpers.notice.session.username_required")
+        render :new
+      else
+        flash.now[:alert] = t("helpers.notice.session.reset_password_not_implemented")
+        render :new
+      end
+    elsif user = User.authenticate(params[:name], params[:password])
       session[KEY_FOR_USER_ID] = user.id
 
       logger.warn(FORMAT_LOG_LOGIN % [timestamp, user.name, request.env['REMOTE_ADDR']])
@@ -56,6 +65,13 @@ class SessionsController < ApplicationController
     redirect_to root_path, :notice => t("helpers.notice.session.logged_out")
   end
 
+  def mail
+    user = User.find(params[:user_id])
+    UserAuthMailer.password_reset(user).deliver
+
+    render :text => "mail was sent to #{current_user.email}"
+  end
+
   private
 
     def timestamp(timestamp=nil)
@@ -63,3 +79,4 @@ class SessionsController < ApplicationController
       return timestamp.strftime(FORMAT_TIMESTAMP)
     end
 end
+

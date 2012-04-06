@@ -3,14 +3,12 @@ module UserAuthKuma
 module UsersHelper
   include FormHelper
 
-  YES_DISPLAY = 'V'
-  NO_DISPLAY  = '-'
-
   def attribute_value(user, attr_name)
     value = user.attributes[attr_name.to_s]
 
     if value.boolean?
-      return value ? YES_DISPLAY : NO_DISPLAY
+      key = value ? 'owns' : 'not_own'
+      return t("helpers.symbol.user.#{key}")
     end
 
     return value
