@@ -6,9 +6,11 @@ class UserAuthMailer < ActionMailer::Base
   #
   #   en.user_auth_mailer.password_reset.subject
   #
-  def password_reset(user_to)
-    @greeting = "Hello"
+  def notify_password_reset(user, temporary_password)
+    @user = user
+    @temporary_password = temporary_password
 
-    mail :to => user_to.email
+    mail :to => user.email
   end
 end
+

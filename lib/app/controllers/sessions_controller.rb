@@ -38,11 +38,17 @@ class SessionsController < ApplicationController
       user = User.find_by_name(params[:name])
       unless user
         flash.now[:alert] = t("helpers.notice.session.username_required")
-        render :new
       else
-        flash.now[:alert] = t("helpers.notice.session.reset_password_not_implemented")
-        render :new
+        temporary_password = user.reset_password
+        if user.save
+          UserAuthMailer.notify_password_reset(user, temporary_password).deliver
+
+          flash.now[:alert] = t("helpers.notice.session.password_reset_and_mail_sent")
+        else
+          flash.now[:alert] = t("helpers.notice.session.password_reset_failed")
+        end
       end
+      render :new
     elsif user = User.authenticate(params[:name], params[:password])
       session[KEY_FOR_USER_ID] = user.id
 
@@ -63,13 +69,6 @@ class SessionsController < ApplicationController
     reset_session_safely
 
     redirect_to root_path, :notice => t("helpers.notice.session.logged_out")
-  end
-
-  def mail
-    user = User.find(params[:user_id])
-    UserAuthMailer.password_reset(user).deliver
-
-    render :text => "mail was sent to #{current_user.email}"
   end
 
   private

@@ -66,8 +66,8 @@ ja:
         invalid_login: "ユーザ名／パスワードの組み合わせが正しくありません"
         timeout: "%{timeout}分間操作がありませんでしたので自動的にログアウトしました"
         username_required: "パスワードを再発行するには、ユーザ名を入力してください"
-
-        reset_password_not_implemented: "「パスワードの再発行」機能はまだ未完成です"
+        password_reset_and_mail_sent: "パスワードを再発行しました。メールをご覧ください"
+        password_reset_failed: "パスワードの再発行に失敗しました。システム管理者に連絡してください"
 
     alert:
       user:
