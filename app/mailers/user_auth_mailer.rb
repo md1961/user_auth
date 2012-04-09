@@ -15,5 +15,11 @@ class UserAuthMailer < ActionMailer::Base
 
     mail :to => user.email
   end
+
+  def notify_email_change(user)
+    @user = user
+
+    mail :to => user.email
+  end
 end
 

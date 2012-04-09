@@ -45,7 +45,11 @@ class UsersController < ApplicationController
   # <em>params[:user]</em> : 更新後の属性を保持する Hash
   def update
     @user = User.find(params[:id])
+    old_email = @user.email
     if @user.update_attributes(params[:user])
+      if @user.email != old_email
+        UserAuthMailer.notify_email_change(@user).deliver
+      end
       redirect_to users_path, :notice => t("helpers.notice.user.updated")
     else
       render :edit

@@ -95,4 +95,6 @@ ja:
       subject: "SKELTON のログイン・パスワードを再発行しました"
     notify_user_creation:
       subject: "SKELTON にユーザ登録しました"
+    notify_email_change:
+      subject: "SKELTON に登録されたメールアドレスが変更されました"
 
