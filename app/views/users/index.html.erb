@@ -14,7 +14,7 @@
       <th><%= User.human_attribute_name(attr_name) %></th>
     <% end -%>
 
-    <th colspan="3" />
+    <th colspan="2" />
   </tr>
 
   <% @users.each do |user| -%>
@@ -26,7 +26,6 @@
       <% end -%>
 
       <td><%= link_to t("helpers.link.user.edit")          , edit_user_path(user)           %></td>
-      <td><%= link_to t("helpers.link.user.reset_password"), reset_password_user_path(user) %></td>
       <td align="center">
         <% if user.id == current_user.id -%>
           <%= '-' %>
