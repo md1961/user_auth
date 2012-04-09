@@ -24,6 +24,8 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_new_password
 
+  default_scope :order => 'name'
+
   # 与えられたユーザ名とパスワードで認証を行い、認証されれば User のインスタンスを返す
   # <em>name</em> :: ユーザ名
   # <em>password</em> :: パスワード（平文）

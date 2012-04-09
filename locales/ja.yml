@@ -54,7 +54,7 @@ ja:
 
     confirm:
       user:
-        destroy: "ユーザ「%{name}」(実名「%{real_name}」) を削除します。よろしいですか？"
+        destroy: "ユーザ「%{name}」（実名「%{real_name}」）を削除します。よろしいですか？"
 
     notice:
       user:
