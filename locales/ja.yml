@@ -90,9 +90,9 @@ ja:
         password: "パスワード"
         old_password: "現在のパスワード"
 
-  mail:
-    reset_password:
+  user_auth_mailer:
+    notify_password_reset:
       subject: "SKELTON のログイン・パスワードを再発行しました"
-    user_creation:
+    notify_user_creation:
       subject: "SKELTON にユーザ登録しました"
 

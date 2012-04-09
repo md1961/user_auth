@@ -5,7 +5,7 @@ class UserAuthMailer < ActionMailer::Base
     @user = user
     @temporary_password = temporary_password
 
-    mail :to => user.email, :subject => I18n.t("mail.reset_password.subject")
+    mail :to => user.email
   end
 
   def notify_user_creation(user, temporary_password)
@@ -13,7 +13,7 @@ class UserAuthMailer < ActionMailer::Base
     @temporary_password = temporary_password
     @url_for_system = 'http://mimas:4300'
 
-    mail :to => user.email, :subject => I18n.t("mail.user_creation.subject")
+    mail :to => user.email
   end
 end
 
