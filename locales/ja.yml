@@ -92,4 +92,7 @@ ja:
 
   mail:
     reset_password:
-      subject: "SKELTON のログイン・パスワード再発行"
+      subject: "SKELTON のログイン・パスワードを再発行しました"
+    user_creation:
+      subject: "SKELTON にユーザ登録しました"
+

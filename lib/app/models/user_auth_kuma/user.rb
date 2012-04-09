@@ -11,13 +11,16 @@ class User < ActiveRecord::Base
   MIN_LENGTH_OF_PASSWORD = UserAuthKuma::Constant::MIN_LENGTH_OF_PASSWORD
   MAX_LENGTH_OF_PASSWORD = UserAuthKuma::Constant::MAX_LENGTH_OF_PASSWORD
 
-  validates :name    , :presence     => true,
-                       :uniqueness   => true,
-                       :length       => {:within => MIN_LENGTH_OF_NAME .. MAX_LENGTH_OF_NAME}
-  validates :password, :presence     => true,
-                       :confirmation => true,
-                       :length       => {:within => MIN_LENGTH_OF_PASSWORD .. MAX_LENGTH_OF_PASSWORD},
-                       :if => :password_required?
+  validates :name     , :presence     => true,
+                        :uniqueness   => true,
+                        :length       => {:within => MIN_LENGTH_OF_NAME .. MAX_LENGTH_OF_NAME}
+  validates :password , :presence     => true,
+                        :confirmation => true,
+                        :length       => {:within => MIN_LENGTH_OF_PASSWORD .. MAX_LENGTH_OF_PASSWORD},
+                        :if           => :password_required?
+  validates :email    , :presence     => true,
+                        :format       => {:with => /^.+@.*japex\.co\.jp$/}
+  validates :real_name, :presence     => true
 
   before_save :encrypt_new_password
 

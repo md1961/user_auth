@@ -25,7 +25,9 @@ class UsersController < ApplicationController
   # <em>params[:user]</em> : インスタンスを生成するための属性を保持する Hash
   def create
     @user = User.new(params[:user])
+    temporary_password = @user.reset_password
     if @user.save
+      UserAuthMailer.notify_user_creation(@user, temporary_password).deliver
       redirect_to users_path, :notice => t("helpers.notice.user.created")
     else
       render :new
