@@ -1,5 +1,5 @@
 class UserAuthMailer < ActionMailer::Base
-  default :from => 'skelton_admin@skelton.japex.co.jp'
+  default :from => UserAuthKuma::Constant::Mailer::DEFAULT_FROM
 
   def notify_password_reset(user, temporary_password)
     @user = user
@@ -11,7 +11,7 @@ class UserAuthMailer < ActionMailer::Base
   def notify_user_creation(user, temporary_password)
     @user = user
     @temporary_password = temporary_password
-    @url_for_system = 'http://mimas:4300'
+    @url_for_system = UserAuthKuma::Constant::Mailer::URL_FOR_SYSTEM
 
     mail :to => user.email
   end

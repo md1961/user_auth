@@ -31,7 +31,7 @@
           <%= '-' %>
         <% else -%>
           <%= link_to t("helpers.link.user.destroy"), user_path(:id => user), :method => :delete,
-                                    :confirm => t("helpers.confirm.user.destroy") % {name: user.name} %>
+                :confirm => t("helpers.confirm.user.destroy") % {name: user.name, real_name: user.real_name} %>
         <% end -%>
       </td>
     </tr>

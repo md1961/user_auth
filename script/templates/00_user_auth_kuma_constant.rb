@@ -1,10 +1,10 @@
 module UserAuthKuma
   module Constant
-    SESSION_TIMEOUT_IN_MIN =  5
+    SESSION_TIMEOUT_IN_MIN = 20
 
     MIN_LENGTH_OF_NAME     =  5
     MAX_LENGTH_OF_NAME     = 50
-    MIN_LENGTH_OF_PASSWORD =  4
+    MIN_LENGTH_OF_PASSWORD =  8
     MAX_LENGTH_OF_PASSWORD = 20
 
     module TemporaryPassword
@@ -15,6 +15,11 @@ module UserAuthKuma
       NUM_LOWERS = LENGTH - NUM_DIGITS - NUM_SIGNS - NUM_UPPERS
 
       SIGNS = %w(! # $ % & + - * / = @ ?)
+    end
+
+    module Mailer
+      DEFAULT_FROM   = 'xxx@from.jp'
+      URL_FOR_SYSTEM = 'http://host:port'
     end
 
     # Give expression in string to be evaluated by Kernel#eval() such as "users_path"
