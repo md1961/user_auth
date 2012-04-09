@@ -77,17 +77,21 @@ class UsersController < ApplicationController
   # <em>params[:user][:old_password]</em> : ユーザ確認のための現在のパスワード<br />
   # <em>params[:user]</em> : パスワード（２度入力）を保持する Hash
   def update_password
-    if ! @current_user.authenticated?(params[:user][:old_password])
-      @current_user.errors.add(:old_password, t("helpers.alert.user.old_password_not_match"))
-      render :change_password
-    elsif params[:user][:password].blank?
-      @current_user.errors.add(:password, t("helpers.alert.user.password_should_be_entered"))
-      render :change_password
+    old_password = params[:user][:old_password]
+    password     = params[:user][:password]
+
+    if ! @current_user.authenticated?(old_password)
+      @current_user.errors.add(:old_password, t("helpers.alert.user.not_match"))
+    elsif password.blank?
+      @current_user.errors.add(:password, t("helpers.alert.user.should_be_entered"))
+    elsif password == old_password
+      @current_user.errors.add(:password, t("helpers.alert.user.should_be_different_from_old"))
     elsif @current_user.update_attributes(params[:user])
       redirect_to root_path, :notice => t("helpers.notice.user.updated")
-    else
-      render :change_password
+      return
     end
+
+    render :change_password
   end
 
   # パスワードをリセットする。<br />

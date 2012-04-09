@@ -71,8 +71,9 @@ ja:
 
     alert:
       user:
-        old_password_not_match: "が違います"
-        password_should_be_entered: "パスワードを入力してください"
+        not_match: "が違います"
+        should_be_entered: "を入力してください"
+        should_be_different_from_old: "を変更してください"
 
   activerecord:
     model:
