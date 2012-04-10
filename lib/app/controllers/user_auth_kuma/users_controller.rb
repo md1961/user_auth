@@ -70,23 +70,25 @@ class UsersController < ApplicationController
 
   # パスワード変更画面を表示する
   def change_password
-    # just render
+    @user = current_user
   end
 
   # パスワードを更新する<br />
   # <em>params[:user][:old_password]</em> : ユーザ確認のための現在のパスワード<br />
   # <em>params[:user]</em> : パスワード（２度入力）を保持する Hash
   def update_password
+    @user = current_user
+
     old_password = params[:user][:old_password]
     password     = params[:user][:password]
 
-    if ! current_user.authenticated?(old_password)
-      current_user.errors.add(:old_password, t("helpers.alert.user.not_match"))
+    if ! @user.authenticated?(old_password)
+      @user.errors.add(:old_password, t("helpers.alert.user.not_match"))
     elsif password.blank?
-      current_user.errors.add(:password, t("helpers.alert.user.should_be_entered"))
+      @user.errors.add(:password, t("helpers.alert.user.should_be_entered"))
     elsif password == old_password
-      current_user.errors.add(:password, t("helpers.alert.user.should_be_different_from_old"))
-    elsif current_user.update_attributes(params[:user])
+      @user.errors.add(:password, t("helpers.alert.user.should_be_different_from_old"))
+    elsif @user.update_attributes(params[:user])
       redirect_to root_path, :notice => t("helpers.notice.user.updated")
       return
     end
