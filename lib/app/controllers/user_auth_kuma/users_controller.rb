@@ -60,7 +60,7 @@ class UsersController < ApplicationController
   # <em>params[:id]</em> : 削除する User の id
   def destroy
     user = User.find(params[:id])
-    if user.id == @current_user.id
+    if user.id == current_user.id
       raise ArgumentError, "Cannot destroy currently logged-in user"
     end
     user.destroy
@@ -80,13 +80,13 @@ class UsersController < ApplicationController
     old_password = params[:user][:old_password]
     password     = params[:user][:password]
 
-    if ! @current_user.authenticated?(old_password)
-      @current_user.errors.add(:old_password, t("helpers.alert.user.not_match"))
+    if ! current_user.authenticated?(old_password)
+      current_user.errors.add(:old_password, t("helpers.alert.user.not_match"))
     elsif password.blank?
-      @current_user.errors.add(:password, t("helpers.alert.user.should_be_entered"))
+      current_user.errors.add(:password, t("helpers.alert.user.should_be_entered"))
     elsif password == old_password
-      @current_user.errors.add(:password, t("helpers.alert.user.should_be_different_from_old"))
-    elsif @current_user.update_attributes(params[:user])
+      current_user.errors.add(:password, t("helpers.alert.user.should_be_different_from_old"))
+    elsif current_user.update_attributes(params[:user])
       redirect_to root_path, :notice => t("helpers.notice.user.updated")
       return
     end
