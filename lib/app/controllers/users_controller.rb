@@ -1,7 +1,8 @@
-module UserAuthKuma
-
 # モデル User の処理を行うコントローラ
 class UsersController < ApplicationController
+  before_filter :authenticate, :only => [:change_password, :update_password]
+  before_filter :authenticate_as_administrator,
+                             :except => [:change_password, :update_password]
 
   ATTRIBUTE_NAMES_TO_LIST          = %w(id name real_name email time_limit).freeze
   OPTIONAL_ATTRIBUTE_NAMES_TO_LIST = %w(is_writer is_administrator).freeze
@@ -108,7 +109,5 @@ class UsersController < ApplicationController
       render :reset_password_failed
     end
   end
-end
-
 end
 

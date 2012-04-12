@@ -1,5 +1,3 @@
-module UserAuthKuma
-
 module FormHelper
 
   def uak_error_messages_for(object)
@@ -10,7 +8,5 @@ module FormHelper
     render :partial => 'system/error_messages_for',
               :locals => {:object => object, :model_name => model_name}
   end
-end
-
 end
 

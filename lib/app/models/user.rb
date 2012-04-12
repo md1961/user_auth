@@ -1,5 +1,3 @@
-module UserAuthKuma
-
 # ログインユーザを表す永続化クラス
 class User < ActiveRecord::Base
   include Sha1SaltedEncryptor
@@ -55,6 +53,10 @@ class User < ActiveRecord::Base
     return respond_to?(:is_administrator) && is_administrator
   end
 
+  def password_changeable?
+    return ! Constant.get(:users_unable_to_change_password).include?(name)
+  end
+
   # パスワードをリセットする。具体的には、現在のパスワードを上書きして
   # 一時的なパスワードを設定する
   # 返り値 :: 設定した一時的なパスワード
@@ -106,7 +108,5 @@ class User < ActiveRecord::Base
     def pick_lower
       return (?a .. ?z).to_a.sample
     end
-end
-
 end
 

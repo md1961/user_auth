@@ -1,5 +1,3 @@
-module UserAuthKuma
-
 module UsersHelper
   include FormHelper
 
@@ -42,8 +40,6 @@ module UsersHelper
   def browse_back_by_javascript
     return 'javascript:history.go(-1);'
   end
-end
-
 end
 
 
