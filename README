@@ -113,8 +113,6 @@ Rails 3 のみに対応
     修正       : config/initializers/session_store.rb
     修正       : app/controllers/application_controller.rb
     修正       : config/routes.rb
-    修正or新規 : app/models/user.rb
-    修正or新規 : app/controllers/users_controller.rb
     新規作成   : config/initializers/00_user_auth_kuma_constant.rb
     修正       : app/views/layouts/application.html.erb
     修正       : config/application.rb
@@ -212,24 +210,7 @@ Rails 3 のみに対応
 
       root :to => "controller_name#action_name"
 
-  (c. モデル User を用意する)
-
-    下記のように UserAuthKuma::User を継承するように既存のモデルを修正、
-    あるいは存在しなければ新規に作成する。
-
-      class User < UserAuthKuma::User
-
-  (d. UsersController を用意する)
-
-    下記のように UserAuthKuma::UsersController を継承するに既存のコントローラを
-    修正、あるいは存在しなければ新規に作成する。
-
-      class UsersController < UserAuthKuma::UsersController
-        before_filter :authenticate, :only => [:change_password, :update_password]
-        before_filter :authenticate_as_administrator,
-                                   :except => [:change_password, :update_password]
-
-  (e. ユーザ定義の定数ファイルを用意する)
+  (c. ユーザ定義の定数ファイルを用意する)
 
     config/initializers/00_user_auth_kuma_constant.rb を下記の内容で用意する。
     数値自体は任意の値に変更してよい。
@@ -244,7 +225,7 @@ Rails 3 のみに対応
         ...（サーバ起動中に変更可能な定数を扱うメソッド群）...
       end
 
-  (f. app/views/layouts/application.html.erb にリンクなどを追加する)
+  (d. app/views/layouts/application.html.erb にリンクなどを追加する)
 
     下記を yield 文の直前に下記を追加する。
 
@@ -256,7 +237,7 @@ Rails 3 のみに対応
       <%= content_tag :p, notice, :class => "notice" if notice.present? %>
       <%= content_tag :p, alert , :class => "alert"  if alert .present? %>
 
-  (g. 国際化対応の日本語翻訳ファイルを用意する)
+  (e. 国際化対応の日本語翻訳ファイルを用意する)
 
     config/application.rb に以下を追加する。
 
@@ -268,14 +249,14 @@ Rails 3 のみに対応
 
       https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/ja.yml
 
-  (h. スタイルシートを用意する)
+  (f. スタイルシートを用意する)
 
     フォームのエラー表示用の CSS ファイル user_auth.css を public/stylesheets に
     コピーする。
 
-  (i. テンプレート・ビュー app/views/sessions/_login_disabled.html.erb を用意する)
+  (g. テンプレート・ビュー app/views/sessions/_login_disabled.html.erb を用意する)
 
-  (j. 空のテンプレート・ビュー app/views/sessions/_login_notice.html.erb を用意する)
+  (h. 空のテンプレート・ビュー app/views/sessions/_login_notice.html.erb を用意する)
 
 
 使用方法
@@ -310,7 +291,7 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 
 (2)
 認証後も module UserConstant 内の SESSION_TIMEOUT_IN_MIN に設定した時間がページ操作を
-しないまま 経過すると、自動的にログアウトされる。
+しないまま経過すると、自動的にログアウトされる。
 
 (3)
 下記のパスを使用すればユーザ管理画面に遷移する。
@@ -476,5 +457,5 @@ app/views/sessions/_login_disabled.html.erb に記述する。
 `-- uninstall.rb
 
 
-Copyright (c) 2011 [Japan Petroleum Exploration co., ltd.], released under the MIT license
+Copyright (c) 2011-2012 [Japan Petroleum Exploration co., ltd.], released under the MIT license
 
