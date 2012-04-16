@@ -53,6 +53,10 @@ class User < ActiveRecord::Base
     return respond_to?(:is_administrator) && is_administrator
   end
 
+  def expired?
+    return time_limit && time_limit <= Time.now
+  end
+
   def password_changeable?
     return ! Constant.get(:users_unable_to_change_password).include?(name)
   end
