@@ -6,7 +6,7 @@ SKELTON に新規ユーザ登録しました。
 <%= @url_for_system %>
 
 ユーザ名は <%= @user.name %> 、
-パスワードは <%= @temporary_password %> です。
+パスワードは <%= @temporary_password.html_safe %> です。
 ログインしましたら、直ちにパスワードを変更してください。
 
 SKELTON からの自動配信メールです。
