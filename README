@@ -308,6 +308,11 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
     現在のログインユーザを返す。ログインしていなければ nil を返す
 
 (5)
+モデル User に定数やインスタンス・メソッドを追加した場合は
+app/models/user_auth_user_inclusion.rb に module UserAuthUserInclusion を定義して
+そちらに記載する。
+
+(6)
 定数管理モジュール Constant は以下のモジュール関数を持つ。
 
   has_key?(key) -> bool 
@@ -319,14 +324,14 @@ writer? および administrator? はそれぞれ false を返す。また、ク�
 定義するファイルは config/initializers/00_user_auth_kuma_constant.rb の
 CONSTANT_YAML_FILENAME を編集することにより変更できる。
 
-(6)
+(7)
 Constant.get(:login_enabled) が false を返すか、Constant.get(:login_disabled) が
 true を返すように設定された場合は、ログイン画面を表示する代わりにログインできない旨を
 表示する（プラグインの app/views/sessions/_login_disabled.html.erb を表示する）。
 本文は、プラグインではなくプロジェクトのほうの
 app/views/sessions/_login_disabled.html.erb に記述する。
 
-(7)
+(8)
 ログイン画面に追加表示したいものがあれば app/views/sessions/_login_notice.html.erb に
 記述する。
 

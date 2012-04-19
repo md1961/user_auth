@@ -2,6 +2,8 @@
 class User < ActiveRecord::Base
   include Sha1SaltedEncryptor
 
+  include UserAuthUserInclusion rescue
+
   attr_accessor :password, :old_password
 
   MIN_LENGTH_OF_NAME     = UserAuthKuma::Constant::MIN_LENGTH_OF_NAME
