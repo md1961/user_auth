@@ -2,7 +2,7 @@
 class User < ActiveRecord::Base
   include Sha1SaltedEncryptor
 
-  include UserAuthUserInclusion rescue
+  include UserAuthUserInclusion rescue false
 
   attr_accessor :password, :old_password
 
