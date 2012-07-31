@@ -12,8 +12,8 @@ class OverridingMethodChecker
   ]
 
   H_ROOT_DIRS_AND_NAMESPACES = {
-    overriding: ["."           , ""              ],
-    overridden: [PLUGIN_LIB_DIR, "user_auth_kuma"],
+    overriding: ["."           , ""],
+    overridden: [PLUGIN_LIB_DIR, ""],
   }
 
   INDENT = ' ' * 2
