@@ -48,12 +48,16 @@ class OverridingMethodChecker
 
     def user_defined_methods(filename)
       methods = Array.new
-      File.open(filename, 'r') do |fd|
-        fd.each do |line|
-          if line =~ RE_METHOD
-            methods << $1.intern
+      begin
+        File.open(filename, 'r') do |fd|
+          fd.each do |line|
+            if line =~ RE_METHOD
+              methods << $1.intern
+            end
           end
         end
+      rescue
+        # Skip the filename
       end
 
       return methods
