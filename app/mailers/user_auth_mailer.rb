@@ -1,6 +1,8 @@
 class UserAuthMailer < ActionMailer::Base
   default :from => UserAuthKuma::Constant::Mailer::DEFAULT_FROM
 
+  SYSTEM_NAME = UserAuthKuma::Constant::Mailer::SYSTEM_NAME
+
   def notify_password_reset(user, temporary_password)
     @user = user
     @temporary_password = temporary_password

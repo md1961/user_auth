@@ -18,6 +18,7 @@ module UserAuthKuma
     end
 
     module Mailer
+      SYSTEM_NAME    = 'A-System'
       DEFAULT_FROM   = 'xxx@from.jp'
       URL_FOR_SYSTEM = 'http://host:port'
     end
