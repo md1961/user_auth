@@ -93,9 +93,9 @@ ja:
 
   user_auth_mailer:
     notify_password_reset:
-      subject: "SKELTON のログイン・パスワードを再発行しました"
+      subject: "%{system_name} のログイン・パスワードを再発行しました"
     notify_user_creation:
-      subject: "SKELTON にユーザ登録しました"
+      subject: "%{system_name} にユーザ登録しました"
     notify_email_change:
-      subject: "SKELTON に登録されたメールアドレスが変更されました"
+      subject: "%{system_name} に登録されたメールアドレスが変更されました"
 
